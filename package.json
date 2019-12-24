@@ -15,5 +15,9 @@
     "bugs": {
         "url": "https://github.com/jjanmo/nodejs-tutorials/issues"
     },
-    "homepage": "https://github.com/jjanmo/nodejs-tutorials#readme"
+    "homepage": "https://github.com/jjanmo/nodejs-tutorials#readme",
+    "dependencies": {
+        "express": "^4.17.1",
+        "pug": "^2.0.4"
+    }
 }
