@@ -1,6 +1,19 @@
 const express = require("express"); //import module express
 const fs = require("fs"); //import module file system
 const multer = require("multer"); //import module multer(upload middleware)
+
+//만약에 내가 업로드한 파일의 이름등을 커스터마이징하고 싶다면,,
+var _storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, "./uploads");
+        //-> 이곳에 추가적인 코드를 넣어서 원하는대로 커스터마이징 할 수 있음
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage: _storage }); //dest(destination) 경로설정
 const app = express(); //use express
 const port = 3000;
 app.listen(port, function() {
@@ -16,8 +29,17 @@ app.locals.pretty = true; //pug파일에서 만든 html이 웹상에서 예쁘�
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//upload form router
 app.get("/upload", function(req, res) {
     res.render("upload");
+});
+
+//upload file
+app.post("/upload", upload.single("userFile"), function(req, res) {
+    //upload.single('userFile') (= middleware의 역할) : 뒤의 function이 실행되기 전에 먼저 실행되어서 전송된 정보에 파일이 포함되어있으면,
+    //request 객체에 file property를 추가시켜줌 -> file에 대한 정보를 갖게 됨
+    //console.log(req.file); //파일정보
+    res.send("uploaded : " + req.file.originalname);
 });
 
 //이 라우터를 밑으로 옮기면 에러발생 : 아마도 /topic/:id 와 /topic/new를 정확하게 구분하지못해서 생기는 에러인듯..
