@@ -1,5 +1,6 @@
 const express = require("express"); //import module express
 const fs = require("fs"); //import module file system
+const multer = require("multer"); //import module multer(upload middleware)
 const app = express(); //use express
 const port = 3000;
 app.listen(port, function() {
@@ -14,6 +15,10 @@ app.locals.pretty = true; //pug파일에서 만든 html이 웹상에서 예쁘�
 //post방식의 정보를 받기위한 코드(body를 이용하기위한)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/upload", function(req, res) {
+    res.render("upload");
+});
 
 //이 라우터를 밑으로 옮기면 에러발생 : 아마도 /topic/:id 와 /topic/new를 정확하게 구분하지못해서 생기는 에러인듯..
 app.get("/topic/new", function(req, res) {
