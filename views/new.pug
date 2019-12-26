@@ -3,6 +3,13 @@ html
     head
         meta(charset='utf-8')
     body
+        h1 
+            a(href ='/topic') Welcome to Nodejs World
+        ul
+            each topic in topics
+                li
+                    a(href='/topic/'+topic)= topic
+        
         form(action="/form", method="post")
             p
                 input(type="text" name="title")

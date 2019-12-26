@@ -3,7 +3,8 @@ html
     head
         meta(charset="UTF-8")
     body
-        h1 Welcome to Nodejs World
+        h1 
+            a(href ='/topic') Welcome to Nodejs World
         ul
             each topic in topics
                 li
@@ -11,3 +12,5 @@ html
         article
             h2= title
             div= description
+            
+        a(href = '/topic/new') new
