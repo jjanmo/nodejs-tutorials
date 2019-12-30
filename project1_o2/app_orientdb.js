@@ -55,7 +55,7 @@ app.post("/upload", upload.single("userFile"), function (req, res) {
     res.send("uploaded : " + req.file.originalname);
 });
 
-//라우터의 순서가 중요 : /topic/:id와 /topic/add는 같은 형식의 라이터이다
+//라우터의 순서가 중요 : /topic/:id와 /topic/add는 같은 형식의 라우터이다
 app.get("/topic/add", function (req, res) {
     const sql = 'select * from topic';
     db.query(sql).then(function (topics) {
