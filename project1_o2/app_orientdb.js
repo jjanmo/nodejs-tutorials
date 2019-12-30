@@ -55,7 +55,7 @@ app.post("/upload", upload.single("userFile"), function (req, res) {
     res.send("uploaded : " + req.file.originalname);
 });
 
-//라우터의 순서가 중요 : /topic/:id와 /topic/add는 같은 형식의 라우터이다
+//add : 라우터의 순서가 중요 : /topic/:id와 /topic/add는 같은 형식의 라우터이다
 app.get("/topic/add", function (req, res) {
     const sql = 'select * from topic';
     db.query(sql).then(function (topics) {
@@ -63,7 +63,7 @@ app.get("/topic/add", function (req, res) {
     });
 });
 
-//add : 추가
+//add post : form
 app.post("/form", function (req, res) {
     const title = req.body.title;
     const description = req.body.description;
@@ -81,6 +81,43 @@ app.post("/form", function (req, res) {
     });
 });
 
+//edit get
+app.get("/topic/:id/edit", function (req, res) {
+    const sql1 = 'select * from topic';
+    const id = req.params.id;
+    db.query(sql1).then(function (topics) {
+        const sql2 = 'select * from topic where @rid=:rid'
+        db.query(sql2, {
+            params: {
+                rid: id
+            }
+        }).then(function (topic) {
+
+            res.render("edit", { topics: topics, topic: topic[0] });
+
+        });
+    });
+});
+
+//edit post : form
+app.post("/topic/:id/edit", function (req, res) {
+    const title = req.body.title;
+    const description = req.body.description;
+    const author = req.body.author;
+    const id = req.params.id;
+    const sql = 'update topic set title=:title, description=:description, author=:author where @rid=:rid';
+    db.query(sql, {
+        params: {
+            title: title,
+            description: description,
+            author: author,
+            rid: id
+        }
+    }).then(function (topic) {
+        const rid = encodeURIComponent(id);
+        res.redirect(`/topic/${rid}`);
+    });
+});
 
 //목록표시 : 데이터가 저장되면 그 저장된 정보로 리스트를 생성하는 것:
 app.get(["/topic", "/topic/:id"], function (req, res) {
