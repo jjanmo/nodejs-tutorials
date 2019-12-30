@@ -119,6 +119,35 @@ app.post("/topic/:id/edit", function (req, res) {
     });
 });
 
+//delete get
+app.get("/topic/:id/delete", function (req, res) {
+    const sql1 = 'select * from topic';
+    const id = req.params.id;
+    db.query(sql1).then(function (topics) {
+        const sql2 = 'select * from topic where @rid=:rid'
+        db.query(sql2, {
+            params: {
+                rid: id
+            }
+        }).then(function (topic) {
+            res.render("delete", { topics: topics, topic: topic[0] });
+        });
+    });
+});
+
+//delete post : form
+app.post("/topic/:id/delete", function (req, res) {
+    const id = req.params.id;
+    const sql = 'DELETE VERTEX from topic where @rid=:rid';
+    db.query(sql, {
+        params: {
+            rid: id
+        }
+    }).then(function (topic) {
+        res.redirect("/topic");
+    });
+});
+
 //목록표시 : 데이터가 저장되면 그 저장된 정보로 리스트를 생성하는 것:
 app.get(["/topic", "/topic/:id"], function (req, res) {
     const sql1 = 'select * from topic';
@@ -135,5 +164,4 @@ app.get(["/topic", "/topic/:id"], function (req, res) {
         }
     });
 });
-
 

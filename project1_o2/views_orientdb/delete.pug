@@ -19,12 +19,10 @@ html
             else
                 h2 This title
                 | This is description    
-        ul
-            li
-                a(href = '/topic/add') add
-            if (topic)
-                - rid = encodeURIComponent(topic['@rid'])
-                li
-                    a(href = '/topic/'+rid+'/edit') edit
-                li
-                    a(href = '/topic/'+rid+'/delete') delete
+
+        h3= topic.title +' delete now?'
+        article
+            - rid = encodeURIComponent(topic['@rid'])
+            form(action="/topic/"+rid+"/delete", method="post")
+                input(type="submit", value="YES")
+            a(href="/topic/"+rid) NO
