@@ -1,0 +1,23 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+    body
+        h1 
+            a(href ='/topic') Welcome to Nodejs World
+        ul
+            each topic in topics
+                li
+                    - rid = encodeURIComponent(topic['@rid'])
+                    a(href='/topic/'+rid)= topic.title
+        article
+            if (topic)
+                h2= topic.title
+                div= topic.description
+                if(topic.author)
+                    div= topic.author
+            else
+                h2 This title
+                | This is description    
+            
+        a(href = '/topic/add') add
