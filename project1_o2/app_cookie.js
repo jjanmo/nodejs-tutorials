@@ -72,7 +72,7 @@ app.get('/cart/:id', function (req, res) {
     if (!cart[id]) {
         cart[id] = 0;  //object property set
     }
-    cart[id]++;
+    cart[id] = Number(cart[id]) + 1;
     res.cookie('cart', cart);
     res.redirect('/cart');
 });
@@ -81,7 +81,7 @@ app.get('/cart/:id', function (req, res) {
 app.get('/cart', function (req, res) {
     const cart = req.cookies.cart;
     if (cart) {
-        let list = '<tr><th>TITLE</th><th>GENGRE</th><th>PRICE</th><th>QUANTITY</th></tr>';
+        let list = '<tr><th>TITLE</th><th>GENGRE</th><th>PRICE</th><th>QUANTITY</th><th>DELETE</th></tr>';
         for (let id in cart) {
             //변수로서 객체에 접근할 때는 []를 이용해야함 
             list += `<tr>
@@ -89,6 +89,7 @@ app.get('/cart', function (req, res) {
                         <td>${games[id].genre}</td>
                         <td>${games[id].price}</td>
                         <td>${cart[id]}</td>
+                        <td><a href="/cart/delete/${id}">Delete</td>
                     </tr>`;
         }
         res.send(`<h1>Cart List</h1><table border="1" cellspacing="0">${list}</table><br><a href="/games">Games`);
@@ -97,5 +98,18 @@ app.get('/cart', function (req, res) {
     else {
         res.send('Cart is empty!!');
     }
-
 })
+
+//game cart : delete 
+app.get('/cart/delete/:id', function (req, res) {
+    const id = req.params.id;
+    const cart = req.cookies.cart;
+    for (let game in cart) {
+        if (game === id) {
+            cart[game] = Number(cart[game]) - 1;
+            if (cart[game] === 0) delete cart[game];
+        }
+    }
+    res.cookie('cart', cart);
+    res.redirect('/cart');
+});
