@@ -6,13 +6,14 @@ app.listen(port, function () {
     console.log(`App listening on port ${port}`);
 });
 
-app.use(cookieParser());
+app.use(cookieParser('afsfasdfasdf')); //임의의 숫자(키값)을 집어넣으면 쿠키를 암호화 할 수 있다.
+//-> req.signedCookies~~ + res.cookie()에 { signed: true } 옵션 추가
 
 app.get('/count', function (req, res) {
-    let cookieCnt = req.cookies.count ? Number(req.cookies.count) : 0;
+    let cookieCnt = req.signedCookies.count ? Number(req.signedCookies.count) : 0;
     //req.cookies.쿠키이름 : 사용자가 가지고 있는 쿠키를 확인
     cookieCnt++;
-    res.cookie('count', cookieCnt); //쿠키를 저장(쿠키를 생성해서 로컬에 보낸 후 로컬에서 저장)
+    res.cookie('count', cookieCnt, { signed: true }); //쿠키를 저장(쿠키를 생성해서 로컬에 보낸 후 로컬에서 저장)
     res.send(`count : ${cookieCnt}`);
 })
 /*
