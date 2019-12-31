@@ -65,7 +65,7 @@ app.get('/games', function (req, res) {
 });
 
 
-//game cart router
+//game cart router : add
 app.get('/cart/:id', function (req, res) {
     const id = req.params.id;
     const cart = req.cookies.cart ? req.cookies.cart : {};
@@ -74,7 +74,28 @@ app.get('/cart/:id', function (req, res) {
     }
     cart[id]++;
     res.cookie('cart', cart);
-    res.send(cart);
-    // res.redirect('/cart');
+    res.redirect('/cart');
 });
 
+//game cart router
+app.get('/cart', function (req, res) {
+    const cart = req.cookies.cart;
+    if (cart) {
+        let list = '<tr><th>TITLE</th><th>GENGRE</th><th>PRICE</th><th>QUANTITY</th></tr>';
+        for (let id in cart) {
+            //변수로서 객체에 접근할 때는 []를 이용해야함 
+            list += `<tr>
+                        <td>${games[id].title}</td>
+                        <td>${games[id].genre}</td>
+                        <td>${games[id].price}</td>
+                        <td>${cart[id]}</td>
+                    </tr>`;
+        }
+        res.send(`<h1>Cart List</h1><table border="1" cellspacing="0">${list}</table><br><a href="/games">Games`);
+
+    }
+    else {
+        res.send('Cart is empty!!');
+    }
+
+})
