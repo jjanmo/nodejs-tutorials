@@ -8,9 +8,8 @@ app.listen(port, function () {
 
 app.use(cookieParser());
 
-app.get('/counter', function (req, res) {
-    //console.log(req.cookies.count);
-    let cookieCnt = req.cookies.count ? req.cookies.count : 0;
+app.get('/count', function (req, res) {
+    let cookieCnt = req.cookies.count ? Number(req.cookies.count) : 0;
     //req.cookies.쿠키이름 : 사용자가 가지고 있는 쿠키를 확인
     cookieCnt++;
     res.cookie('count', cookieCnt); //쿠키를 저장(쿠키를 생성해서 로컬에 보낸 후 로컬에서 저장)
@@ -26,3 +25,5 @@ app.get('/counter', function (req, res) {
 4) 같은 요청이 들어올 경우 HTTP header에 쿠키를 함께 보냄(request)
 5) 서버에서 쿠키를 읽어서 상태가 변경될 필요성이 있는 경우 변경된 정보를 쿠키에 저장시켜서 보냄(response)
 */
+
+
