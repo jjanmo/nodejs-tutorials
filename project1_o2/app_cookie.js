@@ -27,3 +27,54 @@ app.get('/count', function (req, res) {
 */
 
 
+//implement 'similar' shopping cart
+//game list object
+const games = {
+    a: {
+        title: 'tropico 6',
+        genre: 'simulation',
+        price: 20000
+    },
+    b: {
+        title: 'dark soul3',
+        genre: 'action',
+        price: 7000
+    },
+    c: {
+        title: 'battle ground',
+        genre: 'battle royale',
+        price: 18000
+    }
+}
+
+
+//game list router
+app.get('/games', function (req, res) {
+    let list = '<tr><th>TITLE</th><th>GENGRE</th><th>PRICE</th><th>BUTTON</th></tr>';
+    for (let game in games) {
+        //변수로서 객체에 접근할 때는 []를 이용해야함 
+        list += `<tr>
+                    <td>${games[game].title}</td>
+                    <td>${games[game].genre}</td>
+                    <td>${games[game].price}</td>
+                    <td><a href="/cart/${game}">ADD</td>
+                </tr>`;
+    }
+
+    res.send(`<h1>Game List</h1><table border="1" cellspacing="0">${list}</table><br><a href="/cart">Cart`);
+});
+
+
+//game cart router
+app.get('/cart/:id', function (req, res) {
+    const id = req.params.id;
+    const cart = req.cookies.cart ? req.cookies.cart : {};
+    if (!cart[id]) {
+        cart[id] = 0;  //object property set
+    }
+    cart[id]++;
+    res.cookie('cart', cart);
+    res.send(cart);
+    // res.redirect('/cart');
+});
+
