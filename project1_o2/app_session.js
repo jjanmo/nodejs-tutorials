@@ -64,7 +64,8 @@ app.post('/auth/login', function (req, res) {
     const password = req.body.password;
     if (user.name === userName && user.password === password) {
         // res.send('<h2>welcome!</h2>')
-        req.session.display = user.displayName; //session에 display라는 프로퍼티로 값을 줌
+        req.session.displayName = user.displayName;
+        //session에 display라는 프로퍼티로 값을 줌 : 프로퍼티이름은 어디서나 같은 걸로 접근해야함
         res.redirect('/welcome');
     }
     else {
@@ -72,10 +73,18 @@ app.post('/auth/login', function (req, res) {
     }
 });
 
+app.get('/auth/logout', function (req, res) {
+    delete req.session.displayName;
+    // req.session.destroy(function (err) {
+    //     // cannot access session here
+    // });
+    res.redirect('/welcome');
+});
+
 
 //welcome page
 app.get('/welcome', function (req, res) {
-    const displayName = req.session.display;
+    const displayName = req.session.displayName;
     if (displayName) {
         res.send(`
                 <h2>Hello ${displayName}!!</h2>
