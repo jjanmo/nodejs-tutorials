@@ -17,6 +17,12 @@ app.use(session({
     saveUninitialized: true,
 }));
 
+/*
+참고:설명추가
+express-session을 사용하면 req.session 이라는 객체가 생성
+해당하는 객체에 property(여기선 count)를 할당함으로써 세션에 값을 줌
+*/
+
 //counter using session
 app.get('/count', function (req, res) {
     console.log(req.session.count);
@@ -50,18 +56,39 @@ app.get('/auth/login', function (req, res) {
 app.post('/auth/login', function (req, res) {
     //This data is located here, to reduce complexity of a our app.(in fact in database)
     const user = {
-        name: 'jjanmo',
-        password: '1234'
+        name: 'jjanmo',         //로그인 할때 사용하는 유저아이디
+        password: '1234',
+        displayName: 'JJANMO'  //로그인하면 화면에 보이는 유저아이디
     }
-
     const userName = req.body.userName;
     const password = req.body.password;
     if (user.name === userName && user.password === password) {
-        res.send('<h2>welcome!</h2>')
-        // res.redirect('/welcome');
+        // res.send('<h2>welcome!</h2>')
+        req.session.display = user.displayName; //session에 display라는 프로퍼티로 값을 줌
+        res.redirect('/welcome');
     }
     else {
         res.send('<h2>username or password is wrong! please check it</h2><a href="/auth/login"/>Back');
+    }
+});
+
+
+//welcome page
+app.get('/welcome', function (req, res) {
+    const displayName = req.session.display;
+    if (displayName) {
+        res.send(`
+                <h2>Hello ${displayName}!!</h2>
+                <p>
+                    <a href="/auth/logout"/>LOGOUT
+                </p>
+                `);
+    }
+    else {
+        res.send(`
+                <h2>WELCOME</h2>
+                <h3>Please login first <a href="/auth/login"/>LOGIN<h3>
+        `);
     }
 
 });
