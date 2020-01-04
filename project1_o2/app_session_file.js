@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const FileStore = require("session-file-store")(session);
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
@@ -15,9 +16,15 @@ app.use(
     session({
         secret: "asdfasdfasf@#$%safdsfa",
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: true,
+        store: new FileStore() //()안에는 옵션값이 들어감
     })
 );
+
+//-> session으로 만들어져서 메모리에 저장됨 -> 리로드될 때마다 메모리가 날라가서 새로시작됨
+//-> 이를 방지하기 위해서 file이나 데이터베이스에 저장을 해야함
+//-> file에 저장하기 위해서 사용하는 모듈 : session-file-store + store라는 옵션 사용
+//-> 세션이 추가될때마다 폴더 session안에 같은 컴터로 접속하면 그것을 알 수 있는 session 객체가 생성됨
 
 /*
 참고:설명추가
@@ -31,9 +38,7 @@ app.get("/count", function(req, res) {
     req.session.count = req.session.count ? req.session.count + 1 : 1;
     res.send(`count : ${req.session.count}`);
 });
-//-> session으로 만들어져서 메모리에 저장됨 -> 리로드될 때마다 메모리가 날라가서 새로시작됨
-//-> 이를 방지하기 위해서 file이나 데이터베이스에 저장을 해야함
-//-> file에 저장하는 것 : app_session_file.js 로!!
+//-> session으로 만들어졌기때문에 서버가 리로드될 때마다 리셋됨
 
 //login : get
 app.get("/auth/login", function(req, res) {
