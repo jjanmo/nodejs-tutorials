@@ -9,19 +9,14 @@
     </head>
     <body>
         <h2>User Information</h2>
-        <form action="/sendUserInfo" method="post">
             <div class="userInfo">
                 <img src="img/avator.png" alt="avator" />
             </div>
             <div class="userInfo">
-                <p>NAME : <input type="text" name="userName" placeholder="name" /></p>
-                <p>EMAIL : <input type="text" name="userEmail" placeholder="email" /></p>
-                <p>PHONE : <input type="text" name="userPhone" placeholder="phone" /></p>
-            </div>
-            <div>
-                <input type="submit" />
+                <p>NAME : <%= userName %> </p>
+                <p>EMAIL : <%= userEmail %> </p>
+                <p>PHONE : <%= userPhone %> </p>
             </div>
         </form>
-        <script src="main.js"></script>
     </body>
 </html>

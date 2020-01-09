@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>SEND AJAX</title>
+        <style>
+            img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .userInfo {
+                display: inline-block;
+                margin: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>User Information</h2>
+        <div class="userInfo">
+            <img src="img/avator.png" alt="avator" />
+        </div>
+        <div class="userInfo">
+            <p>NAME : <input type="text" name="userName" placeholder="name" /></p>
+            <p>EMAIL : <input type="text" name="userEmail" placeholder="email" /></p>
+            <p>PHONE : <input type="text" name="userPhone" placeholder="phone" /></p>
+        </div>
+        <div>
+            <button id="sendAjax">CLICK</button>
+        </div>
+        <div class="result"></div>
+    </body>
+    <script>
+        //nodejs에서 ajax를 이용하기
+        /*
+        create a XMLHttpRequest object
+        write the callback function
+        open the request
+        send the request
+        */
+
+        const ajaxBtn = document.querySelector("#sendAjax");
+        ajaxBtn.addEventListener("click", sendInfo);
+
+        function sendInfo() {
+            const userName = document.querySelector("input[name=userName]").value;
+            const userEmail = document.querySelector("input[name=userEmail]").value;
+            const userPhone = document.querySelector("input[name=userPhone]").value;
+
+            //전달한 정보
+            var userInfo = {
+                userName: userName,
+                userEmail: userEmail,
+                userPhone: userPhone
+            };
+
+            //객체를 문자열로 변환(문자열로 전달해야함)
+            userInfo = JSON.stringify(userInfo);
+
+            const httpRequest = new XMLHttpRequest();
+            if (!httpRequest) {
+                console.log("Cant make XMLHTTP instance");
+                return false;
+            }
+
+            httpRequest.open("post", "/sendAjax");
+            httpRequest.setRequestHeader("Content-type", "application/json");
+            httpRequest.send(userInfo);
+
+            //응답
+            httpRequest.addEventListener("load", function() {
+                const result = document.querySelector(".result");
+                const response = JSON.parse(httpRequest.responseText);
+                console.log(response);
+                result.innerHTML = ``;
+            });
+        }
+    </script>
+</html>
