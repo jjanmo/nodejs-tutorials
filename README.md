@@ -19,8 +19,3 @@
 ## project2_inf
 
 -   인프런 [Node강의(윤지수tr)](https://www.inflearn.com/course/node-js-%EC%9B%B9%EA%B0%9C%EB%B0%9C) 에 대한 실습 및 과제 풀이
-
-## project2_ajax
-
-- 생활코딩 [Ajax강의](https://opentutorials.org/course/3281)
-  - Node에서 pure javascript로 Ajax 구현하는 부분에서 부족함을 느껴 Ajax tutorials을 추가  
