@@ -22,5 +22,5 @@
 
 ## project2_ajax
 
-- 생활코딩 [Ajax강의](https://opentutorials.org/course/3281) 
+- 생활코딩 [Ajax강의](https://opentutorials.org/course/3281)
   - Node에서 pure javascript로 Ajax 구현하는 부분에서 부족함을 느껴 Ajax tutorials을 추가  
