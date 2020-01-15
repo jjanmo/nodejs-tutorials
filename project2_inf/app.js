@@ -48,8 +48,11 @@ app.get('/sendAjax', function (req, res) {
 });
 
 app.post('/sendAjax', function (req, res) {
-    console.log(req.body.userInfo);
-    const responseData = { data: req.body.userInfo };
-    console.log(responseData);
+    console.log(req.body);
+    const responseData = {
+        userName: req.body.userName,
+        userEmail: req.body.userEmail,
+        userPhone: req.body.userPhone
+    };
     res.json(responseData);
 });

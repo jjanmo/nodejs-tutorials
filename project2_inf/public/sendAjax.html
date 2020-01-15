@@ -50,31 +50,29 @@
             const userPhone = document.querySelector("input[name=userPhone]").value;
 
             //전달한 정보
-            var userInfo = {
+            const userInfo = {
                 userName: userName,
                 userEmail: userEmail,
                 userPhone: userPhone
             };
 
             //객체를 문자열로 변환(문자열로 전달해야함)
-            userInfo = JSON.stringify(userInfo);
+            const data = JSON.stringify(userInfo);
 
-            const httpRequest = new XMLHttpRequest();
-            if (!httpRequest) {
-                console.log("Cant make XMLHTTP instance");
-                return false;
-            }
+            const xhr = new XMLHttpRequest();
 
-            httpRequest.open("post", "/sendAjax");
-            httpRequest.setRequestHeader("Content-type", "application/json");
-            httpRequest.send(userInfo);
+            xhr.open("POST", "http://127.0.0.1:3000/sendAjax");
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.send(data);
 
             //응답
-            httpRequest.addEventListener("load", function() {
+            xhr.addEventListener("load", function() {
                 const result = document.querySelector(".result");
-                const response = JSON.parse(httpRequest.responseText);
-                console.log(response);
-                result.innerHTML = ``;
+                const response = JSON.parse(xhr.responseText);
+                const userName = response.userName;
+                const userEmail = response.userEmail;
+                const userPhone = response.userPhone;
+                result.innerHTML = `${userName} / ${userEmail} / ${userPhone}`;
             });
         }
     </script>

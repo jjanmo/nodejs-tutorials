@@ -1,0 +1,28 @@
+{
+	"movies": [{
+			"moviename": "Bad Boys 3",
+			"genres": "Action",
+			"release": "January 16, 2020"
+		},
+		{
+			"moviename": "Star Wars: The Rise of Skywalker",
+			"genres": "Fantasy/Sci-fi",
+			"release": "January 8, 2020"
+		},
+		{
+			"moviename": "Frozen 2",
+			"genres": " Drama/Fantasy",
+			"release": " November 21, 2019"
+		},
+		{
+			"moviename": "Midway",
+			"genres": "Drama/Action",
+			"release": "December 31, 2019"
+		},
+		{
+			"moviename": "Star Wars: The Last Jedi",
+			"genres": "Fantasy/Sci-fi",
+			"release": "December 14, 2017"
+		}
+	]
+}

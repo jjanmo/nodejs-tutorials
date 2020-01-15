@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>SEARCH</title>
+        <style>
+            .result {
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <input type="text" name="keyword" /><input type="submit" id="searchBtn" value="검색" />
+        </div>
+        <div class="result"></div>
+    </body>
+    <script>
+        const searchBtn = document.querySelector("#searchBtn");
+        searchBtn.addEventListener("click", search);
+        function search(e) {
+            e.preventDefault();
+            const inputValue = document.querySelector("[name=keyword]").value;
+
+            const data = { keyword: inputValue };
+            const keywordStr = JSON.stringify(data);
+
+            //fetch
+            // fetch("http://127.0.0.1:3000/search", {
+            //     method: "POST",
+            //     headers: {
+            //         Accept: "application/json",
+            //         "Content-Type": "application/json"
+            //     },
+            //     body: keywordStr
+            // })
+            //     .then(function(response) {
+            //         return response.json();
+            //     })
+            //     .then(function(json) {
+            //         // console.log(json);
+            //     });
+
+            //pure javascript
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://127.0.0.1:3000/search");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(keywordStr);
+
+            xhr.addEventListener("load", function() {
+                const result = document.querySelector(".result");
+                const movieData = JSON.parse(xhr.responseText);
+                console.log(movieData);
+                let output = "";
+                if (movieData.length !== 0) {
+                    movieData.forEach(ele => {
+                        output += `${ele.moviename} : ${ele.genres} : ${ele.release}<br>`;
+                    });
+                    result.innerHTML = output;
+                    result.style.color = "black";
+                } else {
+                    result.innerHTML = "Cant find!!";
+                    result.style.color = "red";
+                }
+            });
+        }
+    </script>
+</html>
