@@ -1,0 +1,24 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+    body
+        h1 
+            a(href ='/topic') Welcome to Nodejs World
+        ul
+            each topic in topics
+                li
+                    a(href='/topic/'+topic)= topic
+        article
+            h2= title
+            div= description
+
+            if (!flag)
+                li
+                    a(href = '/topic/add') add  
+
+            else
+                li
+                    a(href = '/topic/'+title+'/edit') edit 
+                li
+                    a(href = '/topic/'+title+'/delete') delete

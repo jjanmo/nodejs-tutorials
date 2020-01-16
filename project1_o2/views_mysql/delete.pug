@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+    body
+        h1 
+            a(href ='/topic') Welcome to Nodejs World
+        ul
+            each topic in topics
+                li
+                    a(href='/topic/'+topic)= topic
+        article
+            h2= title
+            div= description
+            
+        h3= title +' delete now?'
+        article
+            form(action="/topic/"+title+"/delete", method="post")
+                input(type="submit", value="YES")
+            a(href="/topic/"+title) NO
