@@ -12,5 +12,13 @@ html
         article
             h2= title
             div= description
-          
-            a(href = '/topic/new') new  
+
+            if (!flag)
+                li
+                    a(href = '/topic/add') add  
+
+            else
+                li
+                    a(href = '/topic/'+title+'/edit') edit 
+                li
+                    a(href = '/topic/'+title+'/delete') delete

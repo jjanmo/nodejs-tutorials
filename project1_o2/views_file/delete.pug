@@ -12,5 +12,9 @@ html
         article
             h2= title
             div= description
-          
-            a(href = '/topic/new') new  
+            
+        h3= title +' delete now?'
+        article
+            form(action="/topic/"+title+"/delete", method="post")
+                input(type="submit", value="YES")
+            a(href="/topic/"+title) NO
