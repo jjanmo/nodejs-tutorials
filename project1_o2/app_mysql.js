@@ -1,7 +1,7 @@
 //구현 목표 : mysql을 이용하여서 simple board를 구현하기
 
 const express = require("express"); //import module express
-const fs = require("fs");           //import module file system
+const mysql = require('mysql');     //import mysql
 
 const app = express(); //use express
 const port = 3000;
@@ -17,6 +17,36 @@ app.locals.pretty = true; //pug파일에서 만든 html이 웹상에서 예쁘�
 //post방식의 정보를 받기위한 코드(body를 이용하기 위한)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+//app이 접속할 db의 정보를 입력 
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'jjanmo',
+    password: 'jjanmo',
+    database: 'o2'
+});
+
+connection.connect();
+
+connection.query('select * from topic', function (error, results, fields) {
+    if (error) {
+        console.log(error);
+    }
+    console.log(results, fields);
+});
+
+connection.end();
+
+
+
+
+
+
+
+
+
+
 
 //입력창
 app.get("/topic/add", function (req, res) {
