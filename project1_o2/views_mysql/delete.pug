@@ -8,13 +8,13 @@ html
         ul
             each topic in topics
                 li
-                    a(href='/topic/'+topic)= topic
+                    a(href='/topic/'+topic.id)= topic.title
         article
-            h2= title
-            div= description
+            h2= topic.title
+            div= topic.description
             
-        h3= title +' delete now?'
+        h3= 'This ['+ topic.title +'] list DELETE now?'
         article
-            form(action="/topic/"+title+"/delete", method="post")
+            form(action="/topic/"+topic.id+"/delete", method="post")
                 input(type="submit", value="YES")
-            a(href="/topic/"+title) NO
+            a(href="/topic/"+topic.id) NO

@@ -5,15 +5,13 @@ html
     body
         h1 
             a(href ='/topic') Welcome to Nodejs World
-        ul
-            each topic in topics
-                li
-                    a(href='/topic/'+topic)= topic
         
-        form(action='/topic/'+title+'/edit', method="post")
+        form(action='/topic/'+topic.id+'/edit', method="post")
             p
-                input(type="text" name="title" value=title)
+                input(type="text" name="title" value=topic.title)
             p
-                textarea(name="description")= description
+                textarea(name="description" rows="5" cols="40")= topic.description
             p
                 input(type="submit")
+            p   
+                a( href=`/topic/${topic.id}`) back    

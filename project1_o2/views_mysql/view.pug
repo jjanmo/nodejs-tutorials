@@ -8,17 +8,23 @@ html
         ul
             each topic in topics
                 li
-                    a(href='/topic/'+topic)= topic
+                    a(href='/topic/'+topic.id)= topic.title
         article
-            h2= title
-            div= description
+            if (topic)
+                h2= topic.title
+                div= topic.description
+                div= 'by '+ topic.name
+            else  
+                h2 Title space
+                div Description space
+                div Author space
+            
+        ul
+            li
+                a(href = '/topic/add') add 
 
-            if (!flag)
+            if (topic)
                 li
-                    a(href = '/topic/add') add  
-
-            else
+                    a(href = '/topic/'+topic.id+'/edit') edit 
                 li
-                    a(href = '/topic/'+title+'/edit') edit 
-                li
-                    a(href = '/topic/'+title+'/delete') delete
+                    a(href = '/topic/'+topic.id+'/delete') delete

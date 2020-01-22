@@ -26,103 +26,136 @@ const connection = mysql.createConnection({
     password: 'jjanmo',
     database: 'o2'
 });
-
+//database 연결
 connection.connect();
 
-connection.query('select * from topic', function (error, results, fields) {
-    if (error) {
-        console.log(error);
-    }
-    console.log(results, fields);
-});
+// connection.query('select * from topic', function (error, results, fields) {
+//     if (error) {
+//         console.log(error);
+//     }
+//     console.log(results, fields);
+// });
 
-connection.end();
-
-
-
-
-
-
-
-
-
-
+// connection.end();
 
 //입력창
 app.get("/topic/add", function (req, res) {
-    fs.readdir("./data", function (err, files) {
-        if (err) res.status(500).send("Internal Server Error");
-        res.render("add", { topics: files });
-    });
+    const sql = 'select  title, id from topic';
+    connection.query(sql, function (error, topics, fields) {
+        if (error) console.log(error);
+        res.render('add', { topics: topics });
+    })
 });
 
 //데이터 추가 : post
-app.post("/add", function (req, res) {
+app.post("/topic/add", function (req, res) {
     //form을 통해서 받은 title과 description을 파일에 저장
-    const title = decodeURIComponent(req.body.title);
+    const title = req.body.title;
     const description = req.body.description;
-    fs.writeFile(`./data/${title}`, description, function (err) {
-        if (err) {
-            res.status(500).send("Internal Server Error");
-        }
-        console.log("The file has been saved!");
+    const author = req.body.author;
+    console.log(title, description, author);
+    const sql = 'insert into topic (title, description) values (?,?)';
+    const params = [title, description];
+    connection.query(sql, params, function (error, topic, fields) {
+
+        //author
+        const sql1 = 'select EXISTS (select * from author where name=?) as success';
+        connection.query(sql1, [author], function (error, results, fields) {
+            const existName = results[0].success; //
+            if (existName) {
+                //author가 존재할 때, 존재하는 아이디 값을 author_id에 넣어줘야함
+                const updateQuery1 = 'update topic set author_id = (select id from author where name=(?)) where id = (?)';
+                connection.query(updateQuery1, [author, topic.insertId], function (error, results, fields) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    console.log('author_id is updated');
+                });
+            }
+            else {
+                //author가 존재하지않을 때, id를 생성해주고 그 값을 topic에 채워줘야함
+                const insertAuthor = 'insert into author (name) values (?)';
+                connection.query(insertAuthor, [author], function (error, results, fields) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    console.log('author name is saved');
+                    const updateQuery2 = 'update topic set author_id = (?) where id = (?)';
+                    connection.query(updateQuery2, [results.insertId, topic.insertId], function (error, results, fields) {
+                        if (error) {
+                            console.log(error);
+                        }
+                        console.log('author_id is updated');
+                    })
+                });
+            }
+        });
+        res.redirect(`/topic/${topic.insertId}`);
     });
-    //res.send("Success");
-    //redirect
-    res.redirect(`/topic/${title}`);
+});
+
+//목록 or 내용 표시
+app.get(["/topic", "/topic/:id"], function (req, res) {
+    connection.query('select title, id from topic', function (error, topics, fields) {
+        if (error) {
+            console.log(error);
+        }
+        const id = req.params.id;
+        if (id) {
+            const sql = `select topic.title, topic.description, topic.id, author.name from topic 
+                        left outer join author on topic.author_id = author.id where topic.id=?`;
+            const params = [id];
+            connection.query(sql, params, function (error, topic, fields) {
+                if (error) {
+                    console.log(error);
+                }
+                console.log(topic);
+                res.render('view', { topics: topics, topic: topic[0] })
+            });
+        }
+        else {
+            res.render('view', { topics: topics });
+        }
+    });
+    // connection.end();
+    //-> 이코드를 사용하면 error발생 ? why?
 });
 
 //수정창
 app.get("/topic/:id/edit", function (req, res) {
     const id = req.params.id;
-    fs.readdir('./data', function (err, files) {
-        if (err) res.status(500).send('Internal Server Error');
-        fs.readFile(`./data/${id}`, function (err, data) {
-            if (err) throw err;
-            res.render('edit', { topics: files, title: id, description: data });
-        });
+    const sql = 'select title,description,id from topic where id=?';
+    const params = [id];
+    connection.query(sql, params, function (error, topic, fields) {
+        if (error) {
+            console.log(error);
+        }
+        res.render('edit', { topic: topic[0] });
     });
 });
 
 //수정 : post
 app.post("/topic/:id/edit", function (req, res) {
     const id = req.params.id;
-    const title = decodeURIComponent(req.body.title);
+    const title = req.body.title;
     const description = req.body.description;
-    fs.rename(`./data/${id}`, `./data/${title}`, (err) => {
-        fs.writeFile(`./data/${title}`, description, (err) => {
-            res.redirect(`/topic/${title}`);
-        });
+    const sql = 'update topic set title=?, description=? where id=?';
+    const params = [title, description, id];
+    connection.query(sql, params, function (error, results, fields) {
+        res.redirect(`/topic/${id}`);
     });
 })
-
-//목록 or 내용 표시
-app.get(["/topic", "/topic/:id"], function (req, res) {
-    fs.readdir("./data", function (err, files) {
-        if (err) res.status(500).send("Internal Server Error");
-        const id = req.params.id;
-        if (id) {
-            fs.readFile(`data/${id}`, "utf-8", function (err, data) {
-                if (err) res.status(500).send("Internal Server Error");
-
-                res.render("view", { topics: files, flag: true, title: id, description: data });
-                // res.send(data);
-            });
-        } else {
-            res.render("view", { topics: files, flag: false, title: "This is TITLE", description: "DESCRIPTION" });
-        }
-    });
-});
-
 
 //삭제창
 app.get('/topic/:id/delete', function (req, res) {
     const id = req.params.id;
-    fs.readdir('./data', function (err, files) {
-        if (err) res.status(500).send("Internal Server Error");
-        fs.readFile(`./data/${id}`, 'utf-8', function (err, data) {
-            if (err) res.status(500).send("Internal Server Error");
-            res.render("delete", { topics: files, title: id, description: data });
+    const sql1 = 'select title, id from topic';
+    connection.query(sql1, function (error, topics, fields) {
+        if (error) throw error;
+        const sql2 = 'select title,description,id from topic where id=?';
+        const params = [id];
+        connection.query(sql2, params, function (error, topic, fields) {
+            res.render('delete', { topics: topics, topic: topic[0] });
         });
     });
 });
@@ -130,10 +163,9 @@ app.get('/topic/:id/delete', function (req, res) {
 //삭제 : post
 app.post('/topic/:id/delete', function (req, res) {
     const id = req.params.id;
-    // console.log(id);
-    fs.unlink(`./data/${id}`, (err) => {
-        if (err) throw err;
-        console.log(`file ${id} was deleted`);
+    const sql = 'delete from topic where id=?';
+    const params = [id];
+    connection.query(sql, params, function (error, results, fields) {
+        res.redirect('/topic');
     });
-    res.redirect('/topic');
 })
