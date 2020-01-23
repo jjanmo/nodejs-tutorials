@@ -17,6 +17,7 @@
     },
     "homepage": "https://github.com/jjanmo/nodejs-tutorials#readme",
     "dependencies": {
+        "connect-oriento": "^0.1.4",
         "cookie-parser": "^1.4.4",
         "express": "^4.17.1",
         "express-mysql-session": "^2.1.2",
