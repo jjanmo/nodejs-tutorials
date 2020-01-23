@@ -1,3 +1,5 @@
+//session을 파일에 저장하는 기능을 추가한 app
+
 const express = require("express");
 const session = require("express-session");
 //express에는 session기능이 없음 -> express에서 session에 대한 구체적인 기능을 하는 것이 express-session
