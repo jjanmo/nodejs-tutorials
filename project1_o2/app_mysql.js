@@ -24,7 +24,8 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'jjanmo',
     password: 'jjanmo',
-    database: 'o2'
+    database: 'o2',
+    multipleStatements: true // to execute multiple statements
 });
 //database 연결
 connection.connect();
@@ -73,7 +74,7 @@ app.post("/topic/add", function (req, res) {
                 });
             }
             else {
-                //author가 존재하지않을 때, id를 생성해주고 그 값을 topic에 채워줘야함
+                //author가 존재하지않을 때, id를 생성해주고 그 값을 topic에 채워줘야함(update)
                 const insertAuthor = 'insert into author (name) values (?)';
                 connection.query(insertAuthor, [author], function (error, results, fields) {
                     if (error) {
@@ -124,7 +125,8 @@ app.get(["/topic", "/topic/:id"], function (req, res) {
 //수정창
 app.get("/topic/:id/edit", function (req, res) {
     const id = req.params.id;
-    const sql = 'select title,description,id from topic where id=?';
+    const sql = `select topic.title, topic.description, topic.id, author.name from topic 
+    left outer join author on topic.author_id = author.id where topic.id=?`;
     const params = [id];
     connection.query(sql, params, function (error, topic, fields) {
         if (error) {
@@ -135,13 +137,16 @@ app.get("/topic/:id/edit", function (req, res) {
 });
 
 //수정 : post
+//-> author부분에서 뭔가 부족하긴하다...
 app.post("/topic/:id/edit", function (req, res) {
     const id = req.params.id;
     const title = req.body.title;
     const description = req.body.description;
-    const sql = 'update topic set title=?, description=? where id=?';
-    const params = [title, description, id];
-    connection.query(sql, params, function (error, results, fields) {
+    const author = req.body.author;
+    const updateQuery = `update topic set title=?, description = ? where id = ?;
+                         update author set name =? where id = (select author_id from topic where id = ?)`;
+    connection.query(updateQuery, [title, description, id, author, id], function (error, results, fields) {
+        console.log(results);
         res.redirect(`/topic/${id}`);
     });
 })

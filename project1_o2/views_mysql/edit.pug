@@ -12,6 +12,8 @@ html
             p
                 textarea(name="description" rows="5" cols="40")= topic.description
             p
+                input(type="text" name="author" value=topic.name)
+            p   
                 input(type="submit")
             p   
                 a( href=`/topic/${topic.id}`) back    
