@@ -1,9 +1,10 @@
 const express = require("express");
 const session = require("express-session");
+//express에는 session기능이 없음 -> express에서 session에 대한 구체적인 기능을 하는 것이 express-session
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
-app.listen(port, function() {
+app.listen(port, function () {
     console.log(`App listening on port ${port}`);
 });
 
@@ -26,7 +27,7 @@ express-session을 사용하면 req.session 이라는 객체가 생성
 */
 
 //counter using session
-app.get("/count", function(req, res) {
+app.get("/count", function (req, res) {
     console.log(req.session.count);
     req.session.count = req.session.count ? req.session.count + 1 : 1;
     res.send(`count : ${req.session.count}`);
@@ -36,7 +37,7 @@ app.get("/count", function(req, res) {
 //-> file에 저장하는 것 : app_session_file.js 로!!
 
 //login : get
-app.get("/auth/login", function(req, res) {
+app.get("/auth/login", function (req, res) {
     const loginPage = `
         <h1>LOGIN</h1>
         <form action="/auth/login" method="post">
@@ -55,7 +56,7 @@ app.get("/auth/login", function(req, res) {
 });
 
 //login : post
-app.post("/auth/login", function(req, res) {
+app.post("/auth/login", function (req, res) {
     //This data is located here, to reduce complexity of a our app.(in fact in database)
     const user = {
         name: "jjanmo", //로그인 할때 사용하는 유저아이디
@@ -74,7 +75,7 @@ app.post("/auth/login", function(req, res) {
     }
 });
 
-app.get("/auth/logout", function(req, res) {
+app.get("/auth/logout", function (req, res) {
     delete req.session.displayName;
     // req.session.destroy(function (err) {
     //     // cannot access session here
@@ -83,7 +84,7 @@ app.get("/auth/logout", function(req, res) {
 });
 
 //welcome page
-app.get("/welcome", function(req, res) {
+app.get("/welcome", function (req, res) {
     const displayName = req.session.displayName;
     if (displayName) {
         res.send(`

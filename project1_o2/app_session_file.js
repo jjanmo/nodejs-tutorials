@@ -1,10 +1,12 @@
 const express = require("express");
 const session = require("express-session");
+//express에는 session기능이 없음 -> express에서 session에 대한 구체적인 기능을 하는 것이 express-session
 const FileStore = require("session-file-store")(session);
+//session을 파일에 저장하고 싶을 때, 사용하는 모듈 : express-session과 의존관계이기때문에 인자로서 session을 주입
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
-app.listen(port, function() {
+app.listen(port, function () {
     console.log(`App listening on port ${port}`);
 });
 
@@ -21,10 +23,10 @@ app.use(
     })
 );
 
-//-> session으로 만들어져서 메모리에 저장됨 -> 리로드될 때마다 메모리가 날라가서 새로시작됨
+//-> express-session에서 기본적으로 제공하는 session기능 : session으로 만들어져서 메모리에 저장됨 -> 리로드될 때마다 메모리가 날라가서 새로시작됨
 //-> 이를 방지하기 위해서 file이나 데이터베이스에 저장을 해야함
-//-> file에 저장하기 위해서 사용하는 모듈 : session-file-store + store라는 옵션 사용
-//-> 세션이 추가될때마다 폴더 session안에 같은 컴터로 접속하면 그것을 알 수 있는 session 객체가 생성됨
+//-> file에 저장하기 위해서 사용하는 모듈 : session-file-store module + store라는 옵션 사용
+//-> 세션이 추가될때마다 폴더 sessions안에 같은 컴터로 접속하면 그것을 알 수 있는 session 객체가 생성됨
 
 /*
 참고:설명추가
@@ -33,7 +35,7 @@ express-session을 사용하면 req.session 이라는 객체가 생성
 */
 
 //counter using session
-app.get("/count", function(req, res) {
+app.get("/count", function (req, res) {
     console.log(req.session.count);
     req.session.count = req.session.count ? req.session.count + 1 : 1;
     res.send(`count : ${req.session.count}`);
@@ -41,7 +43,7 @@ app.get("/count", function(req, res) {
 //-> session으로 만들어졌기때문에 서버가 리로드될 때마다 리셋됨
 
 //login : get
-app.get("/auth/login", function(req, res) {
+app.get("/auth/login", function (req, res) {
     const loginPage = `
         <h1>LOGIN</h1>
         <form action="/auth/login" method="post">
@@ -60,7 +62,7 @@ app.get("/auth/login", function(req, res) {
 });
 
 //login : post
-app.post("/auth/login", function(req, res) {
+app.post("/auth/login", function (req, res) {
     //This data is located here, to reduce complexity of a our app.(in fact in database)
     const user = {
         name: "jjanmo", //로그인 할때 사용하는 유저아이디
@@ -79,7 +81,7 @@ app.post("/auth/login", function(req, res) {
     }
 });
 
-app.get("/auth/logout", function(req, res) {
+app.get("/auth/logout", function (req, res) {
     delete req.session.displayName;
     // req.session.destroy(function (err) {
     //     // cannot access session here
@@ -88,7 +90,7 @@ app.get("/auth/logout", function(req, res) {
 });
 
 //welcome page
-app.get("/welcome", function(req, res) {
+app.get("/welcome", function (req, res) {
     const displayName = req.session.displayName;
     if (displayName) {
         res.send(`
