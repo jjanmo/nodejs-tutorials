@@ -40,7 +40,13 @@ app.get("/count", function(req, res) {
 
 //db를 사용하지 않기 때문에 배열안에 user의 정보를 저장해서 사용할 것임!
 //이렇게 user정보를 이렇게 사용하면 app 리로딩 될 때마다 새롭게 생성
-const userInfo = [];
+const usersInfo = [
+    {
+        username: "jjanmo",
+        password: "1234",
+        nickname: "JJANMO"
+    }
+];
 
 //login : get
 app.get("/auth/login", function(req, res) {
@@ -65,15 +71,17 @@ app.get("/auth/login", function(req, res) {
 app.post("/auth/login", function(req, res) {
     const username = req.body.username;
     const password = req.body.password;
-    userInfo.forEach(user => {
+    usersInfo.forEach(user => {
         if (user.username === username && user.password === password) {
             req.session.username = username;
-            res.redirect("/welcome");
+            return req.session.save(function() {
+                res.redirect("/welcome");
+            });
         } else
-            res.send(`
+            return res.send(`
                       <h3>username or password is wrong! Please check and log in again</h3>
                       <a href="/auth/login"/>Back  
-        `);
+            `);
     });
 });
 
@@ -133,15 +141,31 @@ app.post("/auth/register", function(req, res) {
     const username = req.body.username;
     const password = req.body.password;
     const nickname = req.body.nickname;
-    const userObj = {
-        username,
-        password,
-        nickname
-    };
-    userInfo.push(userObj);
 
-    //session 생성
-    req.session.username = username;
-
-    res.redirect("/welcome");
+    //사용자 정보를 추가할 때 이미있는 사용자인지를 확인할 필요가 있음
+    usersInfo.forEach(user => {
+        if (username === user.username) {
+            return res.send(`
+                    <h3 style="color:red;">This username isn't allowed. Try again.</h3>
+                    <a href="/auth/register"/>REGISTER     
+            `);
+        } else if (nickname === user.nickname) {
+            return res.send(`
+                <h3 style="color:red;">This nickname isn't allowed. Try again.</h3>
+                <a href="/auth/register"/>REGISTER     
+            `);
+        } else {
+            const userObj = {
+                username,
+                password,
+                nickname
+            };
+            usersInfo.push(userObj);
+            //session 생성
+            req.session.username = username;
+            return req.session.save(function() {
+                res.redirect("/welcome");
+            });
+        }
+    });
 });
