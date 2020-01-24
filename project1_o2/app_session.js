@@ -39,6 +39,7 @@ app.get("/count", function(req, res) {
 //-> file에 저장하는 것 : app_session_file.js 로!!
 
 //db를 사용하지 않기 때문에 배열안에 user의 정보를 저장해서 사용할 것임!
+//이렇게 user정보를 이렇게 사용하면 app 리로딩 될 때마다 새롭게 생성
 const userInfo = [];
 
 //login : get
@@ -46,33 +47,34 @@ app.get("/auth/login", function(req, res) {
     const loginPage = `
         <h1>LOGIN</h1>
         <form action="/auth/login" method="post">
-        <p>
-            <input type="text" name="userName" placeholder="enter the name"/>              
-        
-        </p>
-        <p>
-            <input type="password" name="password" placeholder="enter the password"/>              
-        
-        </p>
-        <input type="submit">
+            <p>
+                <input type="text" name="username" placeholder="Enter the name"/>              
+            
+            </p>
+            <p>
+                <input type="password" name="password" placeholder="Enter the password"/>              
+            
+            </p>
+            <input type="submit">
+        </form>
         `;
     res.send(loginPage);
 });
 
 //login : post
 app.post("/auth/login", function(req, res) {
-    //This data is located here, to reduce complexity of a our app.(in fact in database)
-
-    const userName = req.body.userName;
+    const username = req.body.username;
     const password = req.body.password;
-    if (user.name === userName && user.password === password) {
-        // res.send('<h2>welcome!</h2>')
-        req.session.displayName = user.displayName;
-        //session에 display라는 프로퍼티로 값을 줌 : 프로퍼티이름은 어디서나 같은 걸로 접근해야함
-        res.redirect("/welcome");
-    } else {
-        res.send('<h2>username or password is wrong! please check it</h2><a href="/auth/login"/>Back');
-    }
+    userInfo.forEach(user => {
+        if (user.username === username && user.password === password) {
+            req.session.username = username;
+            res.redirect("/welcome");
+        } else
+            res.send(`
+                      <h3>username or password is wrong! Please check and log in again</h3>
+                      <a href="/auth/login"/>Back  
+        `);
+    });
 });
 
 app.get("/auth/logout", function(req, res) {
