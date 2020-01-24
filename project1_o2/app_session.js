@@ -6,7 +6,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
-app.listen(port, function () {
+app.listen(port, function() {
     console.log(`App listening on port ${port}`);
 });
 
@@ -29,7 +29,7 @@ express-session을 사용하면 req.session 이라는 객체가 생성
 */
 
 //counter using session
-app.get("/count", function (req, res) {
+app.get("/count", function(req, res) {
     console.log(req.session.count);
     req.session.count = req.session.count ? req.session.count + 1 : 1;
     res.send(`count : ${req.session.count}`);
@@ -38,8 +38,11 @@ app.get("/count", function (req, res) {
 //-> 이를 방지하기 위해서 file이나 데이터베이스에 저장을 해야함
 //-> file에 저장하는 것 : app_session_file.js 로!!
 
+//db를 사용하지 않기 때문에 배열안에 user의 정보를 저장해서 사용할 것임!
+const userInfo = [];
+
 //login : get
-app.get("/auth/login", function (req, res) {
+app.get("/auth/login", function(req, res) {
     const loginPage = `
         <h1>LOGIN</h1>
         <form action="/auth/login" method="post">
@@ -53,18 +56,13 @@ app.get("/auth/login", function (req, res) {
         </p>
         <input type="submit">
         `;
-
     res.send(loginPage);
 });
 
 //login : post
-app.post("/auth/login", function (req, res) {
+app.post("/auth/login", function(req, res) {
     //This data is located here, to reduce complexity of a our app.(in fact in database)
-    const user = {
-        name: "jjanmo", //로그인 할때 사용하는 유저아이디
-        password: "1234",
-        displayName: "JJANMO" //로그인하면 화면에 보이는 유저아이디
-    };
+
     const userName = req.body.userName;
     const password = req.body.password;
     if (user.name === userName && user.password === password) {
@@ -77,8 +75,8 @@ app.post("/auth/login", function (req, res) {
     }
 });
 
-app.get("/auth/logout", function (req, res) {
-    delete req.session.displayName;
+app.get("/auth/logout", function(req, res) {
+    delete req.session.username;
     // req.session.destroy(function (err) {
     //     // cannot access session here
     // });
@@ -86,11 +84,11 @@ app.get("/auth/logout", function (req, res) {
 });
 
 //welcome page
-app.get("/welcome", function (req, res) {
-    const displayName = req.session.displayName;
-    if (displayName) {
+app.get("/welcome", function(req, res) {
+    const username = req.session.username;
+    if (username) {
         res.send(`
-                <h2>Hello ${displayName}!!</h2>
+                <h2>Hello ${username}!!</h2>
                 <p>
                     <a href="/auth/logout"/>LOGOUT
                 </p>
@@ -98,7 +96,50 @@ app.get("/welcome", function (req, res) {
     } else {
         res.send(`
                 <h2>WELCOME</h2>
-                <h3>Please login first <a href="/auth/login"/>LOGIN<h3>
+                <div>
+                    <a href="/auth/login"/>LOGIN
+                </div>
+                <div>
+                    <a href="/auth/register"/>REGISTER
+                </div> 
         `);
     }
+});
+
+//register
+app.get("/auth/register", function(req, res) {
+    res.send(`
+            <h3>REGISTER</h3>
+            <form action="/auth/register" method="post">
+                <p>
+                    <input type="text" name="username" placeholder="Enter your name" />
+                </p>
+                <p>
+                    <input type="password" name="password" placeholder="Enter your password" />
+                </p>
+                <p>
+                    <input type="text" name="nickname" placeholder="Enter your nickname" />
+                </p>
+                <p>
+                    <input type="submit" value="SUBMIT" />
+                </p>
+            </form>
+    `);
+});
+
+app.post("/auth/register", function(req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+    const nickname = req.body.nickname;
+    const userObj = {
+        username,
+        password,
+        nickname
+    };
+    userInfo.push(userObj);
+
+    //session 생성
+    req.session.username = username;
+
+    res.redirect("/welcome");
 });
