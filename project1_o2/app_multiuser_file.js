@@ -1,8 +1,11 @@
 //기본적인 session기능을 구현한 app
+// + password sercurity 기능 추가 : md5사용
 
 const express = require("express");
 const session = require("express-session");
 //express에는 session기능이 없음 -> express에서 session에 대한 구체적인 기능을 하는 것이 express-session
+const md5 = require("md5"); //암호화 모듈 : 현재는 사용하지 않음
+//-> 암호화만 가능(원래문자 -> 암호화된문자 가능) , 복호화는 불가(암호화된 문자 -> 원래문자 불가능) : 단방향암호화방법
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
@@ -43,7 +46,7 @@ app.get("/count", function(req, res) {
 const usersInfo = [
     {
         username: "jjanmo",
-        password: "1234",
+        password: "81dc9bdb52d04dc20036dbd8313ed055",
         nickname: "JJANMO"
     }
 ];
@@ -70,7 +73,7 @@ app.get("/auth/login", function(req, res) {
 //login : post
 app.post("/auth/login", function(req, res) {
     const username = req.body.username;
-    const password = req.body.password;
+    const password = md5(req.body.password);
     usersInfo.forEach(user => {
         if (user.username === username && user.password === password) {
             req.session.username = username;
