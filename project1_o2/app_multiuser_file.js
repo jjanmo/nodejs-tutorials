@@ -1,15 +1,15 @@
 //기본적인 session기능을 구현한 app
-// + password sercurity 기능 추가 : md5사용
+// + password sercurity 기능 추가 : md5사용 / sha256
 
 const express = require("express");
 const session = require("express-session");
 //express에는 session기능이 없음 -> express에서 session에 대한 구체적인 기능을 하는 것이 express-session
 
-const md5 = require("md5"); //암호화 모듈 : 현재는 사용하지 않음
+//const md5 = require("md5"); //암호화 모듈 : 현재는 사용하지 않음
 //-> 암호화만 가능(원래문자 -> 암호화된문자 가능) , 복호화는 불가(암호화된 문자 -> 원래문자 불가능) : 단방향암호화방법
-//-> 설계상의 문제로 인해 더이상 암호화로 사용되지않음
+//-> 설계상의 문제로 인해 더이상 암호화로 사용되지않음 대신 sha256 사용
 
-//const sha256 = require("sha256");
+const sha256 = require("sha256");
 
 const bodyParser = require("body-parser");
 const app = express();
@@ -51,13 +51,15 @@ app.get("/count", function(req, res) {
 const usersInfo = [
     {
         name: "jjanmo",
-        password: "452ac38f86be463d5cfdd587718d2457", //이런 값을 해쉬값이라고 함
+        //password: "452ac38f86be463d5cfdd587718d2457", //이런 값을 해쉬값이라고 함, md5를 이용한 것
+        password: "caf50c75a1ad90ee6be325fb9e1841eb5a59361a966dec0fa5fb3910dc9ca6cc", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
         nickname: "JJANMO",
         salt: "#$%asdasd"
     },
     {
         name: "node",
-        password: "0a197cd237c6b6b2098c32646da8693e", //password가 같음 '1234' 하지만 salt값에 의해 암호화했을때 달라짐
+        //password: "0a197cd237c6b6b2098c32646da8693e", //password가 같음 '1234' 하지만 salt값에 의해 암호화했을때 달라짐,  md5를 이용한 것
+        password: "e3729e883a8a0e0ac809ec995219c788b5d573960f17f11badaacc4a47b7ee41", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
         nickname: "NODE",
         salt: "#$%!@#qwe"
     }
@@ -77,6 +79,9 @@ const usersInfo = [
 같은 비밀번호를 가진 유저가 있다고 가정하자.
 한사람의 비밀번호가 뚫릴 경우, 다른 사람의 비밀번호도 뚫리게 된다.
 -> 각각의 비밀번호에 각각 다른 salt값을 줌에 따라서 비밀번호는 같지만 서로 다른 해쉬값을 갖게된다.
+
+참고사이트
+https://starplatina.tistory.com/entry/%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%ED%95%B4%EC%8B%9C%EC%97%90-%EC%86%8C%EA%B8%88%EC%B9%98%EA%B8%B0-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0
 */
 
 //login : get
@@ -118,7 +123,7 @@ app.post("/auth/login", function(req, res) {
     //-> 아직 정확하고 확실하게 원인파악은 안됨. 원인을 논리적으로 추측(?)한 결과임...
 
     for (let user of usersInfo) {
-        if (user.name === name && user.password === md5(password + user.salt)) {
+        if (user.name === name && user.password === sha256(password + user.salt)) {
             req.session.username = name;
             return req.session.save(function() {
                 res.redirect("/welcome");
