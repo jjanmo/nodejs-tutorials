@@ -232,16 +232,20 @@ app.post("/auth/register", function(req, res) {
                 <a href="/auth/register"/>REGISTER     
             `);
         } else {
-            const userObj = {
-                name,
-                password,
-                nickname
-            };
-            usersInfo.push(userObj);
-            //session 생성
-            req.session.username = name;
-            return req.session.save(function() {
-                res.redirect("/welcome");
+            return hasher({ password: password }, function(err, pass, salt, hash) {
+                const userObj = {
+                    name: name,
+                    password: hash,
+                    salt: salt,
+                    nickname: nickname
+                };
+                usersInfo.push(userObj);
+                console.log(usersInfo);
+                //session 생성
+                req.session.username = name;
+                req.session.save(function() {
+                    res.redirect("/welcome");
+                });
             });
         }
     }
