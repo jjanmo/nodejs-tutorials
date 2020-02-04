@@ -9,7 +9,11 @@ const session = require("express-session");
 //-> 암호화만 가능(원래문자 -> 암호화된문자 가능) , 복호화는 불가(암호화된 문자 -> 원래문자 불가능) : 단방향암호화방법
 //-> 설계상의 문제로 인해 더이상 암호화로 사용되지않음 대신 sha256 사용
 
-const sha256 = require("sha256");
+//const sha256 = require("sha256");
+
+//pbkdf2-password module
+const pbkdf2 = require("pbkdf2-password");
+const hasher = pbkdf2();
 
 const bodyParser = require("body-parser");
 const app = express();
@@ -52,16 +56,28 @@ const usersInfo = [
     {
         name: "jjanmo",
         //password: "452ac38f86be463d5cfdd587718d2457", //이런 값을 해쉬값이라고 함, md5를 이용한 것
-        password: "caf50c75a1ad90ee6be325fb9e1841eb5a59361a966dec0fa5fb3910dc9ca6cc", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
-        nickname: "JJANMO",
-        salt: "#$%asdasd"
+        //password: "caf50c75a1ad90ee6be325fb9e1841eb5a59361a966dec0fa5fb3910dc9ca6cc", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
+        //salt: "#$%asdasd",
+
+        //->pbkdf2-password 사용
+        password:
+            "ocoGcBrphxsaPF4y16zt/CUyXw15CN/CJhyVyAqe4cCfC3FaGmZ6q3NfTaDNJZgYiIGnCX1fxN/1snrw4uvS4Mtr/vVsAuSu2heFnhsdm2/A4iZEg1t5pYQ/Yr/wfKEw+S3Rv9z6lCf3xownOvImv4PitPuqvoU2usg8uas66xk=",
+        salt: "1xZtA/NCDSGKx/MOECNekniO8s5fDvAnWWmE0IN9AKniPwuoMpFB/5c3+gMVQ4Xxk2lbqPG/0Qt/CWskLs93vA==",
+
+        nickname: "JJANMO"
     },
     {
         name: "node",
         //password: "0a197cd237c6b6b2098c32646da8693e", //password가 같음 '1234' 하지만 salt값에 의해 암호화했을때 달라짐,  md5를 이용한 것
-        password: "e3729e883a8a0e0ac809ec995219c788b5d573960f17f11badaacc4a47b7ee41", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
-        nickname: "NODE",
-        salt: "#$%!@#qwe"
+        //password: "e3729e883a8a0e0ac809ec995219c788b5d573960f17f11badaacc4a47b7ee41", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
+        //salt: "#$%!@#qwe",
+
+        //-> pbkdf2-password 사용
+        password:
+            "bpZ8WI8lqMs855zrnHwf4ReEhXEbBJ1/Q5GFbwwrqNoamLlw9oUru/FsuIr3IMPZivYpmavD2WbqrJVRLcMyqYVpJJyUn+rnTtbd6EJI/FtBQUnPNg5sBlKY0wi131dww+z5r7fjut+VIVFfQLwSup6+O3P8XkdN+Ot1KVniDp4=",
+        salt: "9WLuNmQrhUFFn8Wn69jyW0RYIPFLSMOCtRNtbROSPdWUF4t+OaNgAEHv4POe6U8fQN+lTQthXDcqUjXf3yyL5g==",
+
+        nickname: "NODE"
     }
 ];
 
@@ -123,10 +139,19 @@ app.post("/auth/login", function(req, res) {
     //-> 아직 정확하고 확실하게 원인파악은 안됨. 원인을 논리적으로 추측(?)한 결과임...
 
     for (let user of usersInfo) {
-        if (user.name === name && user.password === sha256(password + user.salt)) {
-            req.session.username = name;
-            return req.session.save(function() {
-                res.redirect("/welcome");
+        if (user.name === name) {
+            return hasher({ password: password, salt: user.salt }, function(err, pass, salt, hash) {
+                if (user.password === hash) {
+                    req.session.username = name;
+                    req.session.save(function() {
+                        res.redirect("/welcome");
+                    });
+                } else {
+                    res.send(`
+                        <h3>username or password is wrong! Please check and log in again</h3>
+                        <a href="/auth/login"/>Back
+                    `);
+                }
             });
         }
     }
@@ -207,16 +232,20 @@ app.post("/auth/register", function(req, res) {
                 <a href="/auth/register"/>REGISTER     
             `);
         } else {
-            const userObj = {
-                name,
-                password,
-                nickname
-            };
-            usersInfo.push(userObj);
-            //session 생성
-            req.session.username = name;
-            return req.session.save(function() {
-                res.redirect("/welcome");
+            return hasher({ password: password }, function(err, pass, salt, hash) {
+                const userObj = {
+                    name: name,
+                    password: hash,
+                    salt: salt,
+                    nickname: nickname
+                };
+                usersInfo.push(userObj);
+                console.log(usersInfo);
+                //session 생성
+                req.session.username = name;
+                req.session.save(function() {
+                    res.redirect("/welcome");
+                });
             });
         }
     }
