@@ -160,7 +160,7 @@ app.get("/auth/login", function (req, res) {
 
 //login : post
 app.post("/auth/login",
-    passport.authenticate('local', //passport.authenticate()를 위에서 생성한 LocalStrategy객체와 연결함
+    passport.authenticate('local', //passport.authenticate()[middleware]와 위에서 생성한 LocalStrategy객체와 연결함
         //만약에 타사 인증이라면 이 부분이 facebook 등으로 변경 될 것
         {
             successRedirect: '/welcome',
@@ -172,6 +172,7 @@ app.post("/auth/login",
 );
 
 app.get("/auth/logout", function (req, res) {
+    //passport.js를 로그아웃방법
     req.logout();
     req.session.save(function () {
         res.redirect("/welcome");
@@ -252,11 +253,14 @@ app.post("/auth/register", function (req, res) {
                 };
                 usersInfo.push(userObj);
                 console.log(usersInfo);
-                //session 생성
-                req.session.username = username;
-                req.session.save(function () {
-                    res.redirect("/welcome");
-                });
+
+                //passport.js를 통한 회원가입 후 자동 로그인 로직(passport를 통해 중간에 로그인하는 방법)
+                req.login(userObj, function (err) {
+                    if (err) { return next(err) }
+                    req.session.save(function () {
+                        return res.redirect('/welcome');
+                    })
+                })
             });
         }
     }
