@@ -1,16 +1,9 @@
-//기본적인 session기능을 구현한 app
-// + password sercurity 기능 추가 : md5사용 / sha256
-// + pbfdk2-password 
+//passport.js를 이용한 authentication(인증) 기능 구현
+//cf. federation authentication(연합/타사 인증) 기능은 구현하지않음
 
 const express = require("express");
 const session = require("express-session");
 //express에는 session기능이 없음 -> express에서 session에 대한 구체적인 기능을 하는 것이 express-session
-
-//const md5 = require("md5"); //암호화 모듈 : 현재는 사용하지 않음
-//-> 암호화만 가능(원래문자 -> 암호화된문자 가능) , 복호화는 불가(암호화된 문자 -> 원래문자 불가능) : 단방향암호화방법
-//-> 설계상의 문제로 인해 더이상 암호화로 사용되지않음 대신 sha256 사용
-
-//const sha256 = require("sha256");
 
 //pbkdf2-password module
 const pbkdf2 = require("pbkdf2-password");
@@ -23,15 +16,34 @@ app.listen(port, function () {
     console.log(`App listening on port ${port}`);
 });
 
+//import passport 
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+/*
+passport에서 인증 기능을 구현하기 위해선 전략(strategy)을 선택해야함
+그 전략이라 함은, 
+구글,페이스북 등의 타사인증을 할 것인지 
+혹은 자체적인 인증 시스템을 이용할 것인지를 선택하는 것!
+각각의 전략에 맞는 module을 npm으로 설치해줘야함 
+-> 여기선 local strategy를 선택함!
+*/
+
+
 //body-parser 사용 준비 완료
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//session을 사용할 준비 완료!!
+//session을 사용할 준비 완료!!(session설정)
 app.use(
     session({
         secret: "asdfasdfasf@#$%safdsfa",
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: true,
+        cookie: { secure: false }
+        //🚩주의!! secure가 true로 되어있으면 passport session설정에서 문제가 생기는 경우가 있음
+        //-> passport session저장에 있어서 세션을 식별하는 고유한 쿠키를 통해서 이루어지기때문에
+        //secure : true로 하게되면 SSL통신(https protocol)에서만 쿠키를 사용할 수 있게 하는 옵션이기에 
+        //현재 로컬에서 진행중인 프로젝트(http protocol)에선 passport session 설정에 오류가 있을수있음
+        //cf. secure default value : false
     })
 );
 
@@ -41,21 +53,19 @@ express-session을 사용하면 req.session 이라는 객체가 생성
 해당하는 객체에 property(여기선 count)를 할당함으로써 세션에 값을 줌
 */
 
-//counter using session
-app.get("/count", function (req, res) {
-    console.log(req.session.count);
-    req.session.count = req.session.count ? req.session.count + 1 : 1;
-    res.send(`count : ${req.session.count}`);
-});
-//-> session으로 만들어져서 메모리에 저장됨 -> 리로드될 때마다 메모리가 날라가서 새로시작됨
-//-> 이를 방지하기 위해서 file이나 데이터베이스에 저장을 해야함
-//-> file에 저장하는 것 : app_session_file.js 로!!
+app.use(passport.initialize()); //passport 초기화
+app.use(passport.session());    //passport에서 session을 사용하겠다는 의미
+//-> 이를 통해서 passport를 middleware로 등록함
+//🚩주의!! express session 설정보다 반드시 아래 부분에 적어야함
+//-> express-session 설정이 먼저 되어있어야함 
+
 
 //db를 사용하지 않기 때문에 배열안에 user의 정보를 저장해서 사용할 것임!
 //이렇게 user정보를 이렇게 사용하면 app 리로딩 될 때마다 새롭게 생성
 const usersInfo = [
     {
-        name: "jjanmo",
+        id: String(Date.now() * 123),
+        username: "jjanmo",
         //password: "452ac38f86be463d5cfdd587718d2457", //이런 값을 해쉬값이라고 함, md5를 이용한 것
         //password: "caf50c75a1ad90ee6be325fb9e1841eb5a59361a966dec0fa5fb3910dc9ca6cc", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
         //salt: "#$%asdasd",
@@ -68,7 +78,8 @@ const usersInfo = [
         nickname: "JJANMO"
     },
     {
-        name: "node",
+        id: String(Date.now() * 321),
+        username: "node",
         //password: "0a197cd237c6b6b2098c32646da8693e", //password가 같음 '1234' 하지만 salt값에 의해 암호화했을때 달라짐,  md5를 이용한 것
         //password: "e3729e883a8a0e0ac809ec995219c788b5d573960f17f11badaacc4a47b7ee41", //sha256을 이용, 위보다 훨씬 복잡해진 암호화
         //salt: "#$%!@#qwe",
@@ -82,24 +93,51 @@ const usersInfo = [
     }
 ];
 
-/*
-해싱한 비밀번호의 문제점
--문제점1
-단순 해싱한 비밀번호는 뚫릴 여지가 많다. 왜냐하면 수많은 누적된 암호화 자료를 통해서 이를 통계내면
-매우 어려운 복잡도를 가진 비밀번호가 아니고서야 알아낼 수 있다(실제로 그런 사이트 존재)
--> 이럴 경우를 보안하기 위해서 "비밀번호를 해싱하고 소금을 친다(add salt)"고 한다.
--> 비밀번호 + salt
-※salt의 유래
-요리에서 기본양념으로 소금을 치는 것처럼 원문에 소금을 더해서 다른 암호문을 만든다는 의미에서 유래
+//passport local-strategy 에 대한 내용 설정(LocalStrategy객체 생성)
+passport.use(new LocalStrategy(
+    function (username, password, done) {
+        //console.log(username, password);
+        //-> parameter :  login form에서 input의 name property값과 연결됨 
+        //-> name에 적힌 값을 그대로 써야 mapping 됨
 
--문제점2
-같은 비밀번호를 가진 유저가 있다고 가정하자.
-한사람의 비밀번호가 뚫릴 경우, 다른 사람의 비밀번호도 뚫리게 된다.
--> 각각의 비밀번호에 각각 다른 salt값을 줌에 따라서 비밀번호는 같지만 서로 다른 해쉬값을 갖게된다.
+        //자체적인 내부 로직에 대한 코드
+        //-> 여기선 파일을 이용한 인증 방법이기때문에 기존 코드를 사용함    
+        for (let user of usersInfo) {
+            if (user.username === username) {
+                return hasher({ password: password, salt: user.salt }, function (err, pass, salt, hash) {
+                    if (user.password === hash) {
+                        console.log('localStrategy', user);
+                        done(null, user);
+                        //done(param1, param2, param3)
+                        //param1 : error정보를 넣는 곳(error 설정), 무조건 실패하는 경우에만 적음, 여기선 성공하는 경우이기때문에 null
+                        //param2 : user정보객체 -> ture or truthy value -> user정보객체를  가지고 passport.serializeUser()로 연결
+                        //param3 : option, error message content - 비밀번호가 틀렸을 경우 이에 대한 메세지를 표시하고 싶다면 적어줌)
+                    } else {
+                        done(null, false);
+                    }
+                });
+            }
+        }
+        done(null, false);
+    }
+));
 
-참고사이트
-https://starplatina.tistory.com/entry/%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%ED%95%B4%EC%8B%9C%EC%97%90-%EC%86%8C%EA%B8%88%EC%B9%98%EA%B8%B0-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0
-*/
+//session 설정
+//유저가 사이트에 처음 로그인하면 하면 이곳으로 와서 세션 정보를 [req.session.passport.user]에 저장함
+passport.serializeUser(function (user, done) {
+    //parameter 'user' = LocalStrategy()에서 로그인에 성공했을때 done()의 두번째 인자
+    console.log('serialize', user);
+    done(null, user.id);
+    //user.id는 정확하게 [req.session.passport.user]에 저장됨 -> 이것을 인자로서 deserializeUser()를 호출함
+});
+
+// 이후 접속하면(서버에 요청이 들어오면) 접속한 세션정보를 DB(여기선 파일안의 정보)와 비교함
+passport.deserializeUser(function (id, done) {
+    //parameter 'id' = serializeUser()에서 done()의 두번째 인자인 user.id를 받는것
+    console.log('deserializeUser', id);
+    const user = usersInfo.filter(user => user.id === id)[0];
+    done(null, user); //user가 req.user에 저장됨
+})
 
 //login : get
 app.get("/auth/login", function (req, res) {
@@ -107,7 +145,7 @@ app.get("/auth/login", function (req, res) {
         <h1>LOGIN</h1>
         <form action="/auth/login" method="post">
             <p>
-                <input type="text" name="name" placeholder="Enter the name"/>              
+                <input type="text" name="username" placeholder="Enter the name"/>              
             
             </p>
             <p>
@@ -121,61 +159,32 @@ app.get("/auth/login", function (req, res) {
 });
 
 //login : post
-app.post("/auth/login", function (req, res) {
-    const name = req.body.name;
-    const password = req.body.password;
-
-    // 더 생각해볼 코드뭉치!!
-    // usersInfo.forEach(user => {
-    //     if (user.name === name && user.password === md5(password)) {
-    //         req.session.username = username;
-    //         return req.session.save(function() {
-    //             res.redirect("/welcome");
-    //         });
-    //     }
-    // });
-    //-> 위 코드 error : Cannot set headers after they are sent to the client
-    //-> res.redirect("/welcome");가 1번이상 보내짐
-    //-> 위에서 return을 한다고해서 forEach()를 빠져나오는 것이 아니라 콜백함수만 빠져나오고 다시 forEach()를 순회하는 것 같다.
-    //-> 아직 정확하고 확실하게 원인파악은 안됨. 원인을 논리적으로 추측(?)한 결과임...
-
-    for (let user of usersInfo) {
-        if (user.name === name) {
-            return hasher({ password: password, salt: user.salt }, function (err, pass, salt, hash) {
-                if (user.password === hash) {
-                    req.session.username = name;
-                    req.session.save(function () {
-                        res.redirect("/welcome");
-                    });
-                } else {
-                    res.send(`
-                        <h3>username or password is wrong! Please check and log in again</h3>
-                        <a href="/auth/login"/>Back
-                    `);
-                }
-            });
+app.post("/auth/login",
+    passport.authenticate('local', //passport.authenticate()를 위에서 생성한 LocalStrategy객체와 연결함
+        //만약에 타사 인증이라면 이 부분이 facebook 등으로 변경 될 것
+        {
+            successRedirect: '/welcome',
+            failureRedirect: '/auth/login'
+            //failureFlush: false
+            //failureFlush option이 true일 경우, 로그인 실패시 한번 실패에 대한 메세지를 출력해주는 기능을 함
         }
-    }
-    res.send(`
-        <h3>username or password is wrong! Please check and log in again</h3>
-        <a href="/auth/login"/>Back
-    `);
-});
+    )
+);
 
 app.get("/auth/logout", function (req, res) {
-    delete req.session.username;
-    // req.session.destroy(function (err) {
-    //     // cannot access session here
-    // });
-    res.redirect("/welcome");
+    req.logout();
+    req.session.save(function () {
+        res.redirect("/welcome");
+    });
 });
 
 //welcome page
 app.get("/welcome", function (req, res) {
-    const username = req.session.username;
-    if (username) {
+    const user = req.user;
+    console.log(user);
+    if (user) {
         res.send(`
-                <h2>Hello ${username}!!</h2>
+                <h2>Hello ${user.nickname}!!</h2>
                 <p>
                     <a href="/auth/logout"/>LOGOUT
                 </p>
@@ -199,7 +208,7 @@ app.get("/auth/register", function (req, res) {
             <h3>REGISTER</h3>
             <form action="/auth/register" method="post">
                 <p>
-                    <input type="text" name="name" placeholder="Enter your name" />
+                    <input type="text" name="username" placeholder="Enter your name" />
                 </p>
                 <p>
                     <input type="password" name="password" placeholder="Enter your password" />
@@ -215,14 +224,14 @@ app.get("/auth/register", function (req, res) {
 });
 
 app.post("/auth/register", function (req, res) {
-    const name = req.body.name;
+    const username = req.body.username;
     const password = req.body.password;
     const nickname = req.body.nickname;
 
     //사용자 정보를 추가할 때 이미있는 사용자인지를 확인할 필요가 있음
     for (let user of usersInfo) {
         //->이 곳을 forEach()로 돌릴경우 위(login)에서 발생했던 에러와 같은 에러발생
-        if (name === user.name) {
+        if (username === user.name) {
             return res.send(`
                     <h3 style="color:red;">This username isn't allowed. Try again.</h3>
                     <a href="/auth/register"/>REGISTER     
@@ -235,7 +244,8 @@ app.post("/auth/register", function (req, res) {
         } else {
             return hasher({ password: password }, function (err, pass, salt, hash) {
                 const userObj = {
-                    name: name,
+                    id: String(Date.now()),
+                    username: username,
                     password: hash,
                     salt: salt,
                     nickname: nickname
@@ -243,7 +253,7 @@ app.post("/auth/register", function (req, res) {
                 usersInfo.push(userObj);
                 console.log(usersInfo);
                 //session 생성
-                req.session.username = name;
+                req.session.username = username;
                 req.session.save(function () {
                     res.redirect("/welcome");
                 });
