@@ -2,10 +2,6 @@
 
 > Node.js에 대한 기본적인 개념들에 대해 학습한다.
 
-> 강의의 내용을 보고 따라 치는 것이 아닌 **REAL** 실습을 한다.
-
-> review 파트에서는 배운 것을 토대로 처음부터 끝까지 나의 생각대로의 간단한 node.js 기반의 프로그램을 만들어본다.
-
 ## project1_o2
 
 -   생활코딩 [Node강의](https://www.opentutorials.org/course/2136) 에 대한 실습
