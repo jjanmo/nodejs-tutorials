@@ -1,5 +1,6 @@
 //기본적인 session기능을 구현한 app
 // + password sercurity 기능 추가 : md5사용 / sha256
+// + pbfdk2-password 
 
 const express = require("express");
 const session = require("express-session");
@@ -18,7 +19,7 @@ const hasher = pbkdf2();
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
-app.listen(port, function() {
+app.listen(port, function () {
     console.log(`App listening on port ${port}`);
 });
 
@@ -41,7 +42,7 @@ express-session을 사용하면 req.session 이라는 객체가 생성
 */
 
 //counter using session
-app.get("/count", function(req, res) {
+app.get("/count", function (req, res) {
     console.log(req.session.count);
     req.session.count = req.session.count ? req.session.count + 1 : 1;
     res.send(`count : ${req.session.count}`);
@@ -101,7 +102,7 @@ https://starplatina.tistory.com/entry/%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%ED%9
 */
 
 //login : get
-app.get("/auth/login", function(req, res) {
+app.get("/auth/login", function (req, res) {
     const loginPage = `
         <h1>LOGIN</h1>
         <form action="/auth/login" method="post">
@@ -120,7 +121,7 @@ app.get("/auth/login", function(req, res) {
 });
 
 //login : post
-app.post("/auth/login", function(req, res) {
+app.post("/auth/login", function (req, res) {
     const name = req.body.name;
     const password = req.body.password;
 
@@ -140,10 +141,10 @@ app.post("/auth/login", function(req, res) {
 
     for (let user of usersInfo) {
         if (user.name === name) {
-            return hasher({ password: password, salt: user.salt }, function(err, pass, salt, hash) {
+            return hasher({ password: password, salt: user.salt }, function (err, pass, salt, hash) {
                 if (user.password === hash) {
                     req.session.username = name;
-                    req.session.save(function() {
+                    req.session.save(function () {
                         res.redirect("/welcome");
                     });
                 } else {
@@ -161,7 +162,7 @@ app.post("/auth/login", function(req, res) {
     `);
 });
 
-app.get("/auth/logout", function(req, res) {
+app.get("/auth/logout", function (req, res) {
     delete req.session.username;
     // req.session.destroy(function (err) {
     //     // cannot access session here
@@ -170,7 +171,7 @@ app.get("/auth/logout", function(req, res) {
 });
 
 //welcome page
-app.get("/welcome", function(req, res) {
+app.get("/welcome", function (req, res) {
     const username = req.session.username;
     if (username) {
         res.send(`
@@ -193,7 +194,7 @@ app.get("/welcome", function(req, res) {
 });
 
 //register
-app.get("/auth/register", function(req, res) {
+app.get("/auth/register", function (req, res) {
     res.send(`
             <h3>REGISTER</h3>
             <form action="/auth/register" method="post">
@@ -213,7 +214,7 @@ app.get("/auth/register", function(req, res) {
     `);
 });
 
-app.post("/auth/register", function(req, res) {
+app.post("/auth/register", function (req, res) {
     const name = req.body.name;
     const password = req.body.password;
     const nickname = req.body.nickname;
@@ -232,7 +233,7 @@ app.post("/auth/register", function(req, res) {
                 <a href="/auth/register"/>REGISTER     
             `);
         } else {
-            return hasher({ password: password }, function(err, pass, salt, hash) {
+            return hasher({ password: password }, function (err, pass, salt, hash) {
                 const userObj = {
                     name: name,
                     password: hash,
@@ -243,7 +244,7 @@ app.post("/auth/register", function(req, res) {
                 console.log(usersInfo);
                 //session 생성
                 req.session.username = name;
-                req.session.save(function() {
+                req.session.save(function () {
                     res.redirect("/welcome");
                 });
             });

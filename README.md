@@ -2,8 +2,6 @@
 
 > Node.js에 대한 기본적인 개념들에 대해 학습한다.
 
-> 강의의 내용을 보고 따라 치는 것이 아닌 **REAL** 실습을 한다.
-
 ## project1_o2
 
 -   생활코딩 [Node강의](https://www.opentutorials.org/course/2136) 에 대한 실습
