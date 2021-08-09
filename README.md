@@ -2,7 +2,16 @@
 
 > Node.js에 대한 기본적인 개념들에 대해 학습한다. 단순 실습 및 기록을 위한 저장소이다.
 
-<br/>
+<br />
+<details>
+<summary style='font-size:20px'>Log 📖 </summary>
+19년 12월 ~ 20년 1/2월 Start : 처음 노드에 대해서 공부를 시작<br/>
+<br />
+Pause...Repo...🛑<br />
+<br />
+21년 8월 Restart : Make Node Rest API<br/>
+</details>
+<br />
 
 ## project1_o2
 
@@ -16,6 +25,19 @@
 
 <br/>
 
-## project3_inf
+## project3
 
-> `project2_inf`를 바탕으로 간단한 REST API 만들기
+> 간단한 REST API 만들기
+
+- [ ] Create User
+- [ ] Read User
+- [ ] Update User
+- [ ] Delete User
+- [ ] Use Database of Mysql
+
+- [ ] Use JWT
+- [ ] Use Oauth
+
+- [ ] logger
+- [ ] error handling
+- [ ] testing
