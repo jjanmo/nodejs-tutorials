@@ -12,7 +12,9 @@
 
 ## project2_inf
 
-> 인프런 [Node강의(윤지수tr)](https://www.inflearn.com/course/node-js-%EC%9B%B9%EA%B0%9C%EB%B0%9C) 에 대한 실습
+> 인프런 [Node강의:웹개발로 알아보는 백엔드 자바스크립트의 이해](https://www.inflearn.com/course/node-js-%EC%9B%B9%EA%B0%9C%EB%B0%9C) 에 대한 실습
+
+<br/>
 
 ## project3_inf
 
