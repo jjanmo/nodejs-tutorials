@@ -1,15 +1,17 @@
 const User = require('../models/users.model');
 
-const getAll = (req, res) => {
-  // user 가져오기
+const findAll = (req, res) => {
   User.getAll((error, data) => {
-    if (error) throw error;
-
+    if (error) {
+      res.status(500).send({
+        message: error.message || 'can not find all users',
+      });
+      return;
+    }
     res.send(data);
   });
-  res.send('all user');
 };
 
 module.exports = {
-  getAll,
+  findAll,
 };

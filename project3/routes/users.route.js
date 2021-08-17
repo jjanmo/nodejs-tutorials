@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getAll } = require('../controllers/users.controller');
+const { findAll } = require('../controllers/users.controller');
 
-router.get('/', getAll);
+router.get('/', findAll);
 
 module.exports = router;

@@ -6,12 +6,16 @@ function User() {
   this.password = password;
 }
 
-User.getAll = function () {
+User.getAll = function (result) {
   getConnection((connection) => {
-    connection.query('SELECT  * from USERS', function (error, results, fields) {
-      console.log(error, results, fields);
-      connection.release();
-      if (error) throw error;
+    connection.query('SELECT  * from USERS', function (error, response) {
+      console.log(error, response);
+      if (error) {
+        result(error, null);
+        return;
+      }
+
+      result(null, response);
     });
   });
 };
