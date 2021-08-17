@@ -12,9 +12,9 @@ const pool = mysql.createPool({
 
 function getConnection(callback) {
   pool.getConnection((error, connection) => {
-    if (!error) {
-      callback(connection);
-    }
+    if (error) throw error;
+
+    callback(connection);
   });
 }
 
