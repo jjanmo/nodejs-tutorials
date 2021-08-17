@@ -10,4 +10,12 @@ const pool = mysql.createPool({
   connectionLimit: 50,
 });
 
-module.exports = pool;
+function getConnection(callback) {
+  pool.getConnection((error, connection) => {
+    if (!error) {
+      callback(connection);
+    }
+  });
+}
+
+module.exports = getConnection;
