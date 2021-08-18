@@ -1,5 +1,5 @@
 const home = (req, res, next) => {
-  res.render('index', { title: 'Express' });
+  res.status(200).send({ data: 'hello world' });
 };
 
 module.exports = {

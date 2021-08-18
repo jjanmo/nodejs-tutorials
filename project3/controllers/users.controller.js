@@ -12,6 +12,34 @@ const findAll = (req, res) => {
   });
 };
 
+const findOne = (req, res) => {
+  const id = req.params.id;
+
+  res.send({ id });
+};
+
+const createOne = (req, res) => {
+  const { email, nickname, password } = req.body;
+
+  res.send({ email, nickname, password });
+};
+
+const updateOne = (req, res) => {
+  const id = req.params.id;
+
+  res.send({ id });
+};
+
+const deleteOne = (req, res) => {
+  const id = req.params;
+
+  res.send(id); // ?
+};
+
 module.exports = {
   findAll,
+  findOne,
+  createOne,
+  updateOne,
+  deleteOne,
 };
