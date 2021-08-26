@@ -14,8 +14,23 @@ const findAll = (req, res) => {
 
 const findOne = (req, res) => {
   const id = req.params.id;
+  User.findById(id, (error, data) => {
+    if (error) {
+      res.status(500).send({
+        message: error.message || `error occurred while finding user : id ${id}`,
+      });
+      return;
+    }
 
-  res.send({ id });
+    if (data.type) {
+      res.status(404).send({
+        message: data.message,
+      });
+      return;
+    }
+
+    res.send(data);
+  });
 };
 
 const createOne = (req, res) => {
