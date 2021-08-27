@@ -35,8 +35,22 @@ const findOne = (req, res) => {
 
 const createOne = (req, res) => {
   const { email, nickname, password } = req.body;
+  const newUser = {
+    email,
+    password,
+    nickname,
+  };
 
-  res.send({ email, nickname, password });
+  User.create(newUser, (error, data) => {
+    // console.log('🎋', error, data);
+    if (error) {
+      res.status(500).send({
+        message: error.message || `can not create user : ${email}`,
+      });
+      return;
+    }
+    res.send(data);
+  });
 };
 
 const updateOne = (req, res) => {
