@@ -54,15 +54,32 @@ const createOne = (req, res) => {
 
 const updateOne = (req, res) => {
   const id = req.params.id;
+  const { nickname, password } = req.body;
+  User.updateById(id, [nickname, password], (error, data) => {
+    if (error) {
+      res.status(500).send({
+        message: error.message || 'can not update user',
+      });
+      return;
+    }
 
-  res.send({ id });
+    let message;
+    if (data.affectedRows === 1) {
+      message = `User(id : ${id}) updated success`;
+    } else if (data.affectedRows === 0) {
+      message = 'No user to update';
+    }
+    const result = {
+      ...data,
+      message,
+    };
+    res.send(result);
+  });
 };
 
 const deleteOne = (req, res) => {
-  const { id } = req.params;
-  console.log(id, typeof id);
-  User.delete(id, (error, data) => {
-    console.log('🎋', error, data);
+  const id = req.params.id;
+  User.deleteById(id, (error, data) => {
     if (error) {
       res.status(500).send({
         message: error.message || 'can not delete user',
@@ -72,7 +89,7 @@ const deleteOne = (req, res) => {
 
     let message;
     if (data.affectedRows === 1) {
-      message = `User(id : ${id}) delete success`;
+      message = `User(id : ${id}) deleted success`;
     } else if (data.affectedRows === 0) {
       message = 'No user to delete';
     }

@@ -44,10 +44,20 @@ User.create = function (newUser, result) {
   });
 };
 
-User.delete = function (id, result) {
+User.updateById = function (id, updatedUser, result) {
+  getConnection(conn => {
+    conn.query('UPDATE users SET nickname = ?, password = ?  WHERE id = ?', [...updatedUser, id], (error, response) => {
+      if (error) {
+        result(error, null);
+      }
+      result(null, response);
+    });
+  });
+};
+
+User.deleteById = function (id, result) {
   getConnection(conn => {
     conn.query('DELETE FROM users WHERE id = ?', id, (error, response) => {
-      console.log('🪴', error, response);
       if (error) {
         result(error, null);
       }
