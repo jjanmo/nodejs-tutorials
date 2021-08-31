@@ -42,7 +42,6 @@ const createOne = (req, res) => {
   };
 
   User.create(newUser, (error, data) => {
-    // console.log('🎋', error, data);
     if (error) {
       res.status(500).send({
         message: error.message || `can not create user : ${email}`,
@@ -60,9 +59,29 @@ const updateOne = (req, res) => {
 };
 
 const deleteOne = (req, res) => {
-  const id = req.params;
+  const { id } = req.params;
+  console.log(id, typeof id);
+  User.delete(id, (error, data) => {
+    console.log('🎋', error, data);
+    if (error) {
+      res.status(500).send({
+        message: error.message || 'can not delete user',
+      });
+      return;
+    }
 
-  res.send(id); // ?
+    let message;
+    if (data.affectedRows === 1) {
+      message = `User(id : ${id}) delete success`;
+    } else if (data.affectedRows === 0) {
+      message = 'No user to delete';
+    }
+    const result = {
+      ...data,
+      message,
+    };
+    res.send(result);
+  });
 };
 
 module.exports = {

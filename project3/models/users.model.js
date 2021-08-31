@@ -7,7 +7,7 @@ function User(user) {
 }
 
 User.getAll = function (result) {
-  getConnection((conn) => {
+  getConnection(conn => {
     conn.query('SELECT  * FROM users', function (error, response) {
       if (error) {
         result(error, null);
@@ -19,7 +19,7 @@ User.getAll = function (result) {
 };
 
 User.findById = function (id, result) {
-  getConnection((conn) => {
+  getConnection(conn => {
     conn.query(`SELECT * FROM users WHERE id = ${id}`, function (error, response) {
       if (error) {
         result(error, null);
@@ -34,9 +34,20 @@ User.findById = function (id, result) {
 };
 
 User.create = function (newUser, result) {
-  getConnection((conn) => {
-    conn.query(`INSERT INTO users SET ?`, newUser, (error, response) => {
-      // console.log('🪴', error, response);
+  getConnection(conn => {
+    conn.query('INSERT INTO users SET ?', newUser, (error, response) => {
+      if (error) {
+        result(error, null);
+      }
+      result(null, response);
+    });
+  });
+};
+
+User.delete = function (id, result) {
+  getConnection(conn => {
+    conn.query('DELETE FROM users WHERE id = ?', id, (error, response) => {
+      console.log('🪴', error, response);
       if (error) {
         result(error, null);
       }
