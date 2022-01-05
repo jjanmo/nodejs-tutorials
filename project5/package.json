@@ -1,0 +1,17 @@
+{
+  "name": "project5",
+  "version": "1.0.0",
+  "description": "Zoon Clone Coding",
+  "scripts": {
+    "dev": "nodemon"
+  },
+  "keywords": [],
+  "author": "jjanmo",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.16.7",
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "nodemon": "^2.0.15"
+  }
+}
