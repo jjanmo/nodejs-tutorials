@@ -1,12 +1,18 @@
 import express, { Request, Response } from 'express'
+import path from 'path'
 
 const app = express()
 const port = 8080
 
+app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, '../views'))
+
 app.get('/', (req: Request, res: Response) => {
-  res.send('hello world')
+  res.render('home')
 })
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`)
-})
+const handleListening = () => {
+  console.log(`Listening on http://localhost:${port}`)
+}
+
+app.listen(port, handleListening)
