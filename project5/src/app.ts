@@ -6,6 +6,7 @@ const port = 8080
 
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, '../views'))
+app.use(express.static(path.join(__dirname, '../public')))
 
 app.get('/', (req: Request, res: Response) => {
   res.render('home')
