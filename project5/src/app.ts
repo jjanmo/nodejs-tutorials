@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 
 const app = express()
-const port = 5000
+const port = 8080
 
 app.get('/', (req: Request, res: Response) => {
   res.send('hello world')
@@ -10,5 +10,3 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`Listening on port ${port}`)
 })
-
-console.log('hwllo world')
