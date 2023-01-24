@@ -1,5 +1,7 @@
-const sayHello = () => {
-  console.log('aaaa');
-};
+#!/usr/bin/env node
 
-sayHello();
+const sayHello = () => {
+  console.log('bbbb')
+}
+
+sayHello()
