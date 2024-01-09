@@ -8,14 +8,12 @@
 - 19년 12월 ~ 20년 1/2월 Start : 처음 노드에 대해서 공부를 시작함 💡
 - 21년 8월 : Make Node Rest API
 - 22년 5월 : 노드만을 위한 공부할 시간을 마련해보자. 백엔드...
-- ~~22년 6월 Node A-Z with Ellie : 묵혀둔 강의 드디어 시작, 자 들어보자잉~ 🚀~~ → 이번에도 못함 😓
-- 23년 8월부터 Node 복습 + 모두 클린업, 다시 시작! + Learning by Doing
-  - [ ] Zoom Clone Coding
-  - [ ] Realtime Game
-  - [ ] Node CLI 프로그램 (feat. 노드교과서)
-  - [ ] 실시간 GIF 채팅방 만들기 (feat. 노드교과서)
-  - [ ] SNS 서비스(서버) 만들기 (feat. 노드교과서)
-  - [ ] 실시간 경매 사이트 (feat. 노드교과서)
+
+- 2024년 다시 시작하는 **노드 튜터리얼**
+
+  - 24년 1월 : zoom clone coding
+  - 24년 2월 : 드림코딩 Node 1편
+
   </details>
 
 ## Project1_o2 [done]
@@ -29,3 +27,7 @@
 ## Project3 [doing]
 
 > Zoom Clone Coding
+
+## Project4 [todo]
+
+> DreamCoding [Node강의](https://academy.dream-coding.com/courses/node) 연습
