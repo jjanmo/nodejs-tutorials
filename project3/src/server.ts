@@ -21,8 +21,15 @@ const wss = new WebSocket.Server({ server }) // create websocket server on top o
 
 server.listen(PORT, handleListen) // http server & websocket server listen on the same port
 
-const handleConnection = (socket: WebSocket) => {
-  console.log(socket)
-}
+wss.on('connection', (socket: WebSocket) => {
+  console.log('Connected to Server 🚀')
 
-wss.on('connection', handleConnection)
+  socket.on('message', (message: string) => {
+    console.log('New Message from Browser: ', message)
+  })
+  socket.on('close', () => {
+    console.log('Disconnected from Browser ✋🏻')
+  })
+
+  socket.send('hello from the server')
+})
