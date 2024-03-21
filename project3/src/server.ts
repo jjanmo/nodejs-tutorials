@@ -16,7 +16,13 @@ app.get('/*', (req, res) => res.redirect('/'))
 
 const handleListen = () => console.log(`Listening on http://localhost:${PORT}`)
 
-const server = http.createServer(app)
-new WebSocket.Server({ server })
+const server = http.createServer(app) // create http server
+const wss = new WebSocket.Server({ server }) // create websocket server on top of http server
 
-server.listen(PORT, handleListen)
+server.listen(PORT, handleListen) // http server & websocket server listen on the same port
+
+const handleConnection = (socket: WebSocket) => {
+  console.log(socket)
+}
+
+wss.on('connection', handleConnection)
