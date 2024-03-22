@@ -21,15 +21,19 @@ const wss = new WebSocket.Server({ server }) // create websocket server on top o
 
 server.listen(PORT, handleListen) // http server & websocket server listen on the same port
 
+const handleSocketMessage = (message: string) => {
+  // TOOD 다른 방식?? 버퍼처리?? 왜??
+  console.log('New Message from Browser: ', Buffer.from(message, 'base64').toString('utf-8'))
+}
+const handleSocketClose = () => {
+  console.log('Disconnected from Browser ✋🏻')
+}
+
 wss.on('connection', (socket: WebSocket) => {
   console.log('Connected to Server 🚀')
 
-  socket.on('message', (message: string) => {
-    console.log('New Message from Browser: ', message)
-  })
-  socket.on('close', () => {
-    console.log('Disconnected from Browser ✋🏻')
-  })
+  socket.on('message', handleSocketMessage)
+  socket.on('close', handleSocketClose)
 
-  socket.send('hello from the server')
+  socket.send('Hello')
 })
