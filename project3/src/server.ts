@@ -19,6 +19,8 @@ const handleListen = () => console.log(`Listening on http://localhost:${PORT}`)
 const server = http.createServer(app) // create http server
 const wss = new WebSocket.Server({ server }) // create websocket server on top of http server
 
+const sockets: WebSocket[] = []
+
 server.listen(PORT, handleListen) // http server & websocket server listen on the same port
 
 const handleSocketMessage = (message: string) => {
@@ -35,5 +37,13 @@ wss.on('connection', (socket: WebSocket) => {
   socket.on('message', handleSocketMessage)
   socket.on('close', handleSocketClose)
 
-  socket.send('Hello')
+  sockets.push(socket)
+
+  socket.on('message', (message: string) => {
+    sockets.forEach((socket) => socket.send(`${message.toString()} from server`))
+  })
+
+  socket.on('close', () => {
+    console.log('Disconnected from Browser ✋🏻')
+  })
 })
