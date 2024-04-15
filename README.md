@@ -11,8 +11,7 @@
 
 - 2024년 다시 시작하는 **노드 튜터리얼**
 
-  - 24년 1월 : zoom clone coding
-  - 24년 2월 : 드림코딩 Node 1편
+  - 24년 4월 : zoom clone coding
 
   </details>
 
