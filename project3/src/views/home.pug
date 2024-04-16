@@ -1,15 +1,19 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet", href="https://unpkg.com/mvp.css")
-    title Zoom Clone
-  body 
-    header
-      h1 Zoom Clone 
-    main 
-      form
-        input(type="text", placeholder="메시지를 작성하세요")
-        button(type="submit") 전송
-    script(src="js/app.js") 
+extends layout.pug
+
+block content
+  header(class="container") 
+    h1 
+      mark 줌 클론 
+      span &nbsp;&nbsp;|&nbsp;&nbsp;
+      ins  Zoom Clone 
+      span &nbsp;&nbsp;|&nbsp;&nbsp;
+      kbd ズーム·クローン
+    br
+    h3 닉네임을 설정하세요
+    
+  main
+    form(class="container") 
+      input(type="text", placeholder="닉네임을 입력하세요", name="nickname")
+      button(type="submit") 저장
+
+  script(src="js/home.js") 

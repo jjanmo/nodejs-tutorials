@@ -1,0 +1,10 @@
+extends layout.pug
+
+block content
+  main
+    ul
+
+    form(class="container") 
+      input(type="text", placeholder="메시지를 입력하세요", name="message")
+      button(type="submit") 보내기
+  script(src="js/chat.js") 
