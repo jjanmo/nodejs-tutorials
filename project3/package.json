@@ -6,11 +6,16 @@
   "scripts": {
     "build": "tsc",
     "prestart": "yarn run build",
-    "start": "node dist/server.js",
-    "dev": "nodemon --exec 'ts-node' src/server.ts"
+    "start:server": "node dist/server.js",
+    "start:socket": "node dist/socket.js",
+    "start": "concurrently \"yarn run start:server\" \"yarn run start:socket\"",
+    "dev:server": "nodemon --exec 'ts-node' src/server.ts",
+    "dev:socket": "nodemon --exec 'ts-node' src/socket.ts",
+    "dev": "concurrently \"yarn run dev:server\" \"yarn run dev:socket\""
   },
   "dependencies": {
     "express": "^4.19.2",
+    "dotenv": "^16.4.5",
     "pug": "^3.0.2",
     "ws": "^8.16.0"
   },
@@ -21,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
     "add": "^2.0.6",
+    "concurrently": "^8.2.2",
     "eslint": "^8.46.0",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
