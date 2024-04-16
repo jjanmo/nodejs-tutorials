@@ -26,7 +26,3 @@
 ## Project3 [doing]
 
 > Zoom Clone Coding
-
-## Project4 [todo]
-
-> DreamCoding [Node강의](https://academy.dream-coding.com/courses/node) 연습
