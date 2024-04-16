@@ -1,6 +1,7 @@
 const $form = document.querySelector('form')
 const $input = document.querySelector('input')
 const $button = document.querySelector('button')
+// const $list = document.querySelector('ul')
 
 const socket = new WebSocket(`ws://${window.location.host}`)
 
@@ -9,7 +10,7 @@ socket.addEventListener('open', () => {
 })
 
 socket.addEventListener('message', (message) => {
-  console.log(message.data)
+  console.log('New Message: ', message.data)
 })
 
 socket.addEventListener('close', () => {
