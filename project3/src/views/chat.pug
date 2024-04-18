@@ -1,10 +1,24 @@
 extends layout.pug
 
-block content
-  main
-    ul
+block stylesheets
+  link(rel="stylesheet" href="css/chat.css" )
 
-    form(class="container") 
-      input(type="text", placeholder="메시지를 입력하세요", name="message")
+block content
+  main(class="container")
+    div(class="chat-header")
+      div(class="user-count") 현재 접속자 수: #{userCount}
+      h1(class="title") ChatRoom
+      a(href="/" class="leave-btn") 나가기
+
+    ul(class="message-list")
+      each message in messages
+        li(class="message") 
+          div(class="nickname")= message.nickname
+          div(class="body")= message.body
+
+    form(class="chat-input") 
+      input(type="text" placeholder="메시지를 입력하세요" name="message" autocomplete = "off")
       button(type="submit") 보내기
   script(src="js/chat.js") 
+
+
