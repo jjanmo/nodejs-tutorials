@@ -1,27 +1,45 @@
 import WebSocket from 'ws'
 import { Server } from 'http'
-import { ChatMessage, Message } from './types'
+import { ChatMessage, Message, Sockets } from './types'
 
 export const initializeWebSocket = (server: Server) => {
   const wss = new WebSocket.Server({ server })
-  const sockets: WebSocket[] = []
+  const sockets: Sockets = {}
   const messages: ChatMessage[] = []
 
   wss.on('connection', (socket: WebSocket) => {
     console.log('Connected to Server 🚀')
 
-    sockets.push(socket)
-    sendConnectedNumber(sockets)
-
     socket.on('message', (message: string) => {
-      const parsed = JSON.parse(message)
-      messages.push(parsed)
+      const { type, data } = JSON.parse(message)
 
-      const _message: Message<ChatMessage[]> = {
-        type: 'messages',
-        data: messages,
+      switch (type) {
+        case 'connection': {
+          const nickname = data
+          setSocket(sockets, socket, nickname)
+
+          const _message: Message<number> = {
+            type: 'connection',
+            data: Object.keys(sockets).length,
+          }
+          boardcastMessage<Message<number>>(sockets, _message)
+          break
+        }
+        case 'message': {
+          const _message: Message<ChatMessage[]> = {
+            type: 'messages',
+            data: [...messages, data],
+          }
+          boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
+          break
+        }
+        case 'close': {
+          const nickname = data
+          deleteSocket(sockets, nickname)
+          break
+        }
+        default:
       }
-      sockets.forEach((socket) => socket.send(JSON.stringify(_message)))
     })
 
     socket.on('close', () => {
@@ -30,10 +48,13 @@ export const initializeWebSocket = (server: Server) => {
   })
 }
 
-function sendConnectedNumber(sockets: WebSocket[]) {
-  const _message: Message<number> = {
-    type: 'connection',
-    data: sockets.length,
-  }
-  sockets.forEach((socket) => socket.send(JSON.stringify(_message)))
+function boardcastMessage<T>(sockets: Sockets, message: T) {
+  const socketArray = Object.values(sockets)
+  socketArray.forEach((socket) => socket.send(JSON.stringify(message)))
+}
+function setSocket(sockets: Sockets, socket: WebSocket, key: string) {
+  sockets[key] = socket
+}
+function deleteSocket(sockets: Sockets, key: string) {
+  delete sockets[key]
 }
