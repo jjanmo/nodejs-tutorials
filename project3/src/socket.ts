@@ -1,6 +1,6 @@
 import WebSocket from 'ws'
 import { Server } from 'http'
-import { ChatMessage } from './types'
+import { ChatMessage, Message } from './types'
 
 export const initializeWebSocket = (server: Server) => {
   const wss = new WebSocket.Server({ server })
@@ -17,7 +17,7 @@ export const initializeWebSocket = (server: Server) => {
       const parsed = JSON.parse(message)
       messages.push(parsed)
 
-      const _message = {
+      const _message: Message<ChatMessage[]> = {
         type: 'messages',
         data: messages,
       }
@@ -31,8 +31,8 @@ export const initializeWebSocket = (server: Server) => {
 }
 
 function sendConnectedNumber(sockets: WebSocket[]) {
-  const _message = {
-    type: 'connected',
+  const _message: Message<number> = {
+    type: 'connection',
     data: sockets.length,
   }
   sockets.forEach((socket) => socket.send(JSON.stringify(_message)))
