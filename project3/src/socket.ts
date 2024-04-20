@@ -18,11 +18,18 @@ export const initializeWebSocket = (server: Server) => {
           const nickname = data
           setSocket(sockets, socket, nickname)
 
-          const _message: Message<number> = {
+          const connectedMessage: Message<number> = {
             type: 'connection',
             data: Object.keys(sockets).length,
           }
-          boardcastMessage<Message<number>>(sockets, _message)
+          boardcastMessage<Message<number>>(sockets, connectedMessage)
+
+          // 시차 문제 해결 필요 → 좀 더 수정 필요
+          // const _message: Message<ChatMessage[]> = {
+          //   type: 'messages',
+          //   data: messages,
+          // }
+          // boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
           break
         }
         case 'message': {
@@ -30,6 +37,7 @@ export const initializeWebSocket = (server: Server) => {
             type: 'messages',
             data: [...messages, data],
           }
+          // messages.push(data) // TODO 시차 문제 해결 필요
           boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
           break
         }
