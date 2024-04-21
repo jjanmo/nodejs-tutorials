@@ -1,68 +1,68 @@
-import WebSocket from 'ws'
 import { Server } from 'http'
+import { Server as SocketServer } from 'socket.io'
 import { ChatMessage, Message, Sockets } from './types'
 
 export const initializeWebSocket = (server: Server) => {
-  const wss = new WebSocket.Server({ server })
-  const sockets: Sockets = {}
-  const messages: ChatMessage[] = []
+  const io = new SocketServer(server)
+  // const sockets: Sockets = {}
+  // const messages: ChatMessage[] = []
 
-  wss.on('connection', (socket: WebSocket) => {
-    console.log('Connected to Server 🚀')
+  // wss.on('connection', (socket: WebSocket) => {
+  //   console.log('Connected to Server 🚀')
 
-    socket.on('message', (message: string) => {
-      const { type, data } = JSON.parse(message)
+  //   socket.on('message', (message: string) => {
+  //     const { type, data } = JSON.parse(message)
 
-      switch (type) {
-        case 'connection': {
-          const nickname = data
-          setSocket(sockets, socket, nickname)
+  //     switch (type) {
+  //       case 'connection': {
+  //         const nickname = data
+  //         setSocket(sockets, socket, nickname)
 
-          const connectedMessage: Message<number> = {
-            type: 'connection',
-            data: Object.keys(sockets).length,
-          }
-          boardcastMessage<Message<number>>(sockets, connectedMessage)
+  //         const connectedMessage: Message<number> = {
+  //           type: 'connection',
+  //           data: Object.keys(sockets).length,
+  //         }
+  //         boardcastMessage<Message<number>>(sockets, connectedMessage)
 
-          // 시차 문제 해결 필요 → 좀 더 수정 필요
-          // const _message: Message<ChatMessage[]> = {
-          //   type: 'messages',
-          //   data: messages,
-          // }
-          // boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
-          break
-        }
-        case 'message': {
-          const _message: Message<ChatMessage[]> = {
-            type: 'messages',
-            data: [...messages, data],
-          }
-          // messages.push(data) // TODO 시차 문제 해결 필요
-          boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
-          break
-        }
-        case 'close': {
-          const nickname = data
-          deleteSocket(sockets, nickname)
-          break
-        }
-        default:
-      }
-    })
+  //         // 시차 문제 해결 필요 → 좀 더 수정 필요
+  //         // const _message: Message<ChatMessage[]> = {
+  //         //   type: 'messages',
+  //         //   data: messages,
+  //         // }
+  //         // boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
+  //         break
+  //       }
+  //       case 'message': {
+  //         const _message: Message<ChatMessage[]> = {
+  //           type: 'messages',
+  //           data: [...messages, data],
+  //         }
+  //         // messages.push(data) // TODO 시차 문제 해결 필요
+  //         boardcastMessage<Message<ChatMessage[]>>(sockets, _message)
+  //         break
+  //       }
+  //       case 'close': {
+  //         const nickname = data
+  //         deleteSocket(sockets, nickname)
+  //         break
+  //       }
+  //       default:
+  //     }
+  //   })
 
-    socket.on('close', () => {
-      console.log('Disconnected from Browser ✋🏻')
-    })
-  })
+  //   socket.on('close', () => {
+  //     console.log('Disconnected from Browser ✋🏻')
+  //   })
+  // })
 }
 
-function boardcastMessage<T>(sockets: Sockets, message: T) {
-  const socketArray = Object.values(sockets)
-  socketArray.forEach((socket) => socket.send(JSON.stringify(message)))
-}
-function setSocket(sockets: Sockets, socket: WebSocket, key: string) {
-  sockets[key] = socket
-}
-function deleteSocket(sockets: Sockets, key: string) {
-  delete sockets[key]
-}
+// function boardcastMessage<T>(sockets: Sockets, message: T) {
+//   const socketArray = Object.values(sockets)
+//   socketArray.forEach((socket) => socket.send(JSON.stringify(message)))
+// }
+// function setSocket(sockets: Sockets, socket: WebSocket, key: string) {
+//   sockets[key] = socket
+// }
+// function deleteSocket(sockets: Sockets, key: string) {
+//   delete sockets[key]
+// }
