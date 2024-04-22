@@ -1,9 +1,14 @@
 import { Server } from 'http'
-import { Server as SocketServer } from 'socket.io'
-import { ChatMessage, Message, Sockets } from './types'
+import { Socket, Server as SocketServer } from 'socket.io'
 
 export const initializeWebSocket = (server: Server) => {
   const io = new SocketServer(server)
+
+  io.on('connection', (socket: Socket) => {
+    console.log(socket)
+    console.log('Connected to Server 🚀')
+  })
+
   // const sockets: Sockets = {}
   // const messages: ChatMessage[] = []
 

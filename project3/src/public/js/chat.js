@@ -1,87 +1,90 @@
-const chatForm = document.querySelector('.chat-form')
-const input = chatForm.querySelector('input')
-const button = chatForm.querySelector('button')
+import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js'
 
-const socket = new WebSocket(`ws://${window.location.host}`)
+// const chatForm = document.querySelector('.chat-form')
+// const input = chatForm.querySelector('input')
+// const button = chatForm.querySelector('button')
+const socket = io()
 
-socket.addEventListener('open', () => {
-  console.log('Connected to Server 🚀')
+console.log('socket', socket)
 
-  const nickname = getNickname()
-  const _message = {
-    type: 'connection',
-    data: nickname,
-  }
-  socket.send(JSON.stringify(_message))
-})
+// socket.addEventListener('open', () => {
+//   console.log('Connected to Server 🚀')
 
-socket.addEventListener('close', () => {
-  console.log('Disconnected from Server ✋🏻')
+//   const nickname = getNickname()
+//   const _message = {
+//     type: 'connection',
+//     data: nickname,
+//   }
+//   socket.send(JSON.stringify(_message))
+// })
 
-  const nickname = getNickname()
-  const _message = {
-    type: 'close',
-    data: nickname,
-  }
-  socket.send(JSON.stringify(_message))
-})
+// socket.addEventListener('close', () => {
+//   console.log('Disconnected from Server ✋🏻')
 
-socket.addEventListener('message', (message) => {
-  const { data, type } = JSON.parse(message.data)
+//   const nickname = getNickname()
+//   const _message = {
+//     type: 'close',
+//     data: nickname,
+//   }
+//   socket.send(JSON.stringify(_message))
+// })
 
-  switch (type) {
-    case 'connection':
-      renderConnectedNumber(data)
-      break
-    case 'messages':
-      renderMessages(data || [])
-      break
-    case 'close':
-      break
-  }
-})
+// socket.addEventListener('message', (message) => {
+//   const { data, type } = JSON.parse(message.data)
 
-const handleSubmit = (event) => {
-  event.preventDefault()
-  const message = input?.value || ''
-  if (message === '') return
+//   switch (type) {
+//     case 'connection':
+//       renderConnectedNumber(data)
+//       break
+//     case 'messages':
+//       renderMessages(data || [])
+//       break
+//     case 'close':
+//       break
+//   }
+// })
 
-  const nickname = getNickname()
-  const _message = {
-    type: 'message',
-    data: { nickname, body: message },
-  }
-  socket.send(JSON.stringify(_message))
-  input.value = ''
-}
+// const handleSubmit = (event) => {
+//   event.preventDefault()
+//   const message = input?.value || ''
+//   if (message === '') return
 
-chatForm.addEventListener('submit', handleSubmit)
-button.addEventListener('click', handleSubmit)
+//   const nickname = getNickname()
+//   const _message = {
+//     type: 'message',
+//     data: { nickname, body: message },
+//   }
+//   socket.send(JSON.stringify(_message))
+//   input.value = ''
+// }
 
-function renderMessages(messages) {
-  const chatList = document.querySelector('.chat-list')
+// chatForm.addEventListener('submit', handleSubmit)
+// button.addEventListener('click', handleSubmit)
 
-  const messageElems = messages.map((message) => {
-    const li = document.createElement('li')
-    li.className = 'message'
-    const nickname = document.createElement('div')
-    nickname.className = 'nickname'
-    nickname.textContent = message.nickname
-    const body = document.createElement('div')
-    body.className = 'body'
-    body.textContent = message.body
-    li.append(nickname, body)
-    return li
-  })
+// function renderMessages(messages) {
+//   const chatList = document.querySelector('.chat-list')
 
-  chatList.append(...messageElems)
-}
+//   const messageElems = messages.map((message) => {
+//     const li = document.createElement('li')
+//     li.className = 'message'
+//     const nickname = document.createElement('div')
+//     nickname.className = 'nickname'
+//     nickname.textContent = message.nickname
+//     const body = document.createElement('div')
+//     body.className = 'body'
+//     body.textContent = message.body
+//     li.append(nickname, body)
+//     return li
+//   })
 
-function renderConnectedNumber(data = 0) {
-  const userCount = document.querySelector('.user-count')
-  userCount.textContent = `현재 접속자 수: ${data}`
-}
+//   chatList.append(...messageElems)
+// }
 
-function getNickname() {
-  return JSON.parse(localStorage.getItem('nicknames')).at(-1)
-}
+// function renderConnectedNumber(data = 0) {
+//   const userCount = document.querySelector('.user-count')
+//   userCount.textContent = `현재 접속자 수: ${data}`
+// }
+
+// function getNickname() {
+//   return JSON.parse(localStorage.getItem('nicknames')).at(-1)
+// }
