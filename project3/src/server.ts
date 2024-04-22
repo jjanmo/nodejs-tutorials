@@ -2,6 +2,7 @@ import http from 'http'
 import app from './app'
 import 'dotenv/config'
 import { initializeWebSocket } from './socket'
+import './db'
 
 const server = http.createServer(app)
 
