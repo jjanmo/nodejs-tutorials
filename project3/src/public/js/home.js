@@ -2,7 +2,7 @@ const form = document.querySelector('form')
 const enterBtn = document.querySelector('.enter-btn')
 const nicknameInput = document.querySelector('.nickname')
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault()
   const nickname = nicknameInput.value
   if (nickname === '') {
@@ -10,27 +10,28 @@ const handleSubmit = (e) => {
     return
   }
 
-  saveNickname(nickname)
-  nicknameInput.value = ''
-  window.location.assign('/chat')
-}
-
-const saveNickname = (nickname) => {
-  const nicknames = getNicknames()
-  if (!nicknames.includes(nickname)) {
-    nicknames.push(nickname)
-    localStorage.setItem('nicknames', JSON.stringify(nicknames))
+  try {
+    const response = await postNickname('/nickname', { nickname })
+    if (response.status === 'success') {
+      window.location.assign('/chat')
+    }
+  } catch (e) {
+    console.error(e)
+  } finally {
+    nicknameInput.value = ''
   }
 }
 
-const getNicknames = () => {
-  const nicknames = localStorage.getItem('nicknames')
-  if (nicknames) {
-    const parsedNicknames = JSON.parse(nicknames)
-    return parsedNicknames
-  }
+async function postNickname(url, data) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
 
-  return []
+  return response.json()
 }
 
 const init = () => {
