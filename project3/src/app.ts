@@ -12,8 +12,8 @@ app.use(express.json()) // express built-in body-parser
 app.use('/', express.static(path.join(__dirname, 'public')))
 
 app.get('/', pageController.home)
-app.get('/chatlist', pageController.chatlist)
-app.get('/chat', pageController.chat)
+app.get('/chats/:id', pageController.chatRoom)
+app.get('/chats', pageController.chatList)
 app.post('/nickname', userController.postNickname)
 
 app.get('/*', (req, res) => res.redirect('/'))
