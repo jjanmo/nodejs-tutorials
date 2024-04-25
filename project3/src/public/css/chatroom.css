@@ -10,6 +10,8 @@
   width: 100%;
   margin: 10px 0 30px;
   text-align: center;
+  /* display: flex;
+  justify-content: space-between; */
 }
 .title {
   margin: 0;
@@ -28,7 +30,7 @@
   font-size: 16px;
 }
 
-ul.chat-list {
+ul.chat-messages {
   width: 100%;
   height: 660px;
   padding: 15px;
@@ -37,7 +39,7 @@ ul.chat-list {
   scroll-snap-type: y mandatory;
   border-radius: 10px;
 }
-.chat-list li {
+.chat-messages li {
   scroll-snap-align: start;
   width: 100%;
   height: fit-content;

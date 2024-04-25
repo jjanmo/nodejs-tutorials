@@ -4,8 +4,7 @@ import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js'
 // const input = chatForm.querySelector('input')
 // const button = chatForm.querySelector('button')
 const socket = io()
-
-console.log('socket', socket)
+console.log(socket)
 
 // socket.addEventListener('open', () => {
 //   console.log('Connected to Server 🚀')

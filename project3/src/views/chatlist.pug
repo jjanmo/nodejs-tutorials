@@ -1,7 +1,7 @@
 extends layout.pug
 
 block stylesheets
-  link(rel="stylesheet" href="css/chatlist.css" )
+  link(rel="stylesheet" href="css/chatlist.css")
 
 block content
   header(class="container")
@@ -14,7 +14,7 @@ block content
     form(class="container") 
       label(for="room")
         h6(style="margin-bottom: 0") New Room
-      input(type="text", placeholder="나만의 채팅방 이름을 입력하세요.", name="room" class="room" required)
+      input(type="text", placeholder="나만의 채팅방 이름을 입력하세요.", name="room" id="room" required)
       button(type="submit" class="enter-btn") 만들기
 
     hr(class="container")
@@ -23,6 +23,7 @@ block content
       h6(style="margin-bottom: 0") 채팅방 목록
       ul(class="chatlist") 
 
+block scripts
   script(src="js/chatlist.js") 
 
 

@@ -14,7 +14,7 @@ const handleSubmit = async (e) => {
     const response = await postNickname('/nickname', { nickname })
     const { status } = response
     if (status === 'success') {
-      window.location.assign('/chatlist')
+      window.location.assign('/chats')
     }
   } catch (e) {
     console.error(e)

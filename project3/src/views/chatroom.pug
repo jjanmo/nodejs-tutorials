@@ -1,20 +1,23 @@
 extends layout.pug
 
 block stylesheets
-  link(rel="stylesheet" href="css/chat.css" )
+  link(rel="stylesheet" href="css/chatroom.css")
 
 block content
   main(class="container")
     div(class="chat-header")
       div(class="user-count") 현재 접속자 수: #{userCount}
       h1(class="title") ChatRoom
-      a(href="/" class="leave-btn") 나가기
+      a(href="/chats" class="leave-btn") 나가기
     
-    ul(class="chat-list")
+    ul(class="chat-messages")
 
     form(class="chat-form") 
       input(type="text" placeholder="메시지를 입력하세요" name="message" autocomplete = "off")
       button(type="submit") 보내기
-  script(type="module" src="js/chat.js") 
+
+block scripts
+  script(src="/socket.io/socket.io.js") 
+  script(type="module" src="js/chatroom.js") 
 
 
