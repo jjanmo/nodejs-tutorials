@@ -1,0 +1,29 @@
+extends layout.pug
+
+block stylesheets
+  link(rel="stylesheet" href="css/chatlist.css" )
+
+block content
+  header(class="container")
+    div(class='welcome') 
+      span #{nickname}님 
+      | 환영합니다!
+    a(href="/") 홈으로
+  
+  main
+    form(class="container") 
+      label(for="room")
+        h6(style="margin-bottom: 0") New Room
+      input(type="text", placeholder="나만의 채팅방 이름을 입력하세요.", name="room" class="room" required)
+      button(type="submit" class="enter-btn") 만들기
+
+    hr(class="container")
+
+    section(class="container")
+      h6(style="margin-bottom: 0") 채팅방 목록
+      ul(class="chatlist") 
+
+  script(src="js/chatlist.js") 
+
+
+
