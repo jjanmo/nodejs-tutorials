@@ -1,5 +1,5 @@
 const form = document.querySelector('form')
-const enterBtn = document.querySelector('.enter-btn')
+const saveBtn = document.querySelector('.save-btn')
 const nicknameInput = document.querySelector('.nickname')
 
 const handleSubmit = async (e) => {
@@ -37,7 +37,7 @@ async function postNickname(url, data) {
 
 const init = () => {
   form.addEventListener('submit', handleSubmit)
-  enterBtn.addEventListener('submit', handleSubmit)
+  saveBtn.addEventListener('submit', handleSubmit)
 }
 
 init()
