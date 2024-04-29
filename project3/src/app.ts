@@ -11,10 +11,11 @@ app.use(express.json()) // express built-in body-parser
 
 app.use('/', express.static(path.join(__dirname, 'public'), { extensions: ['js', 'css'] }))
 
-// TODO router 분리 → routers / controllers flow
+// TODO1 router 분리 → routers / controllers flow
+// TODO2 dynamic routing을 사용하면 script를 못불러온다 why?
 app.get('/', pageController.home)
-app.get('/chatroom', pageController.chatRoom)
 app.get('/chats', pageController.chatList)
+app.get('/chatroom', pageController.chatRoom)
 app.post('/nickname', userController.postNickname)
 
 app.get('/*', (req, res) => res.redirect('/'))

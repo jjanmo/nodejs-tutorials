@@ -9,5 +9,7 @@ export const chatList = (req: Request, res: Response) => {
 }
 
 export const chatRoom = (req: Request, res: Response) => {
-  res.render('chatroom', { title: 'Chat Room' })
+  const roomName = req.query.roomName as string
+
+  res.render('chatroom', { title: `[Room] ${roomName}` })
 }

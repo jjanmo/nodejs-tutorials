@@ -13,10 +13,9 @@ const handleSubmit = async (e) => {
     alert('채팅방을 입력해주세요.')
     return
   }
+  socket.emit('create_room', roomName)
 
-  socket.emit('create_room', 'roomName')
-
-  // window.location.assign('/chatroom')
+  window.location.assign(`/chatroom?room=${roomName}`)
 }
 
 const init = () => {
