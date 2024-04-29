@@ -5,7 +5,7 @@ export const home = (req: Request, res: Response) => {
 }
 
 export const chatList = (req: Request, res: Response) => {
-  res.render('chatlist', { title: 'Chat List' })
+  res.render('chats', { title: 'Chat List' })
 }
 
 export const chatRoom = (req: Request, res: Response) => {
