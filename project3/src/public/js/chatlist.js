@@ -1,3 +1,7 @@
+import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js'
+
+const socket = io()
+
 const form = document.querySelector('form')
 const createBtn = document.querySelector('.create-btn')
 const roomInput = document.querySelector('#room')
@@ -10,7 +14,9 @@ const handleSubmit = async (e) => {
     return
   }
 
-  window.location.assign('/chatroom')
+  socket.emit('create_room', 'roomName')
+
+  // window.location.assign('/chatroom')
 }
 
 const init = () => {

@@ -5,8 +5,15 @@ export const initializeWebSocket = (server: Server) => {
   const io = new SocketServer(server)
 
   io.on('connection', (socket: Socket) => {
-    console.log(socket)
+    socket.on('create_room', (message: string) => {
+      console.log(message)
+    })
+
     console.log('Connected to Server 🚀')
+  })
+
+  io.on('close', () => {
+    console.log('Disconnected from Browser ✋🏻')
   })
 
   // const sockets: Sockets = {}
