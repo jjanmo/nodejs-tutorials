@@ -6,6 +6,12 @@ import { io } from 'https://cdn.socket.io/4.7.5/socket.io.esm.min.js'
 const socket = io()
 console.log(socket)
 
+socket.on('enter', (message) => {
+  console.log('@@@', message)
+
+  socket.emit('create_room', 'roomName')
+})
+
 // socket.addEventListener('open', () => {
 //   console.log('Connected to Server 🚀')
 

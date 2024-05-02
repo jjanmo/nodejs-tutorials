@@ -13,10 +13,13 @@ const handleSubmit = async (e) => {
     alert('채팅방을 입력해주세요.')
     return
   }
-  socket.emit('create_room', roomName)
 
   window.location.assign(`/chatroom?room=${roomName}`)
 }
+
+socket.on('chats', (message) => {
+  console.log('@@@', message)
+})
 
 const init = () => {
   form.addEventListener('submit', handleSubmit)

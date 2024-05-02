@@ -5,11 +5,13 @@ export const initializeWebSocket = (server: Server) => {
   const io = new SocketServer(server)
 
   io.on('connection', (socket: Socket) => {
+    console.log('Connected to Server 🚀')
+
     socket.on('create_room', (message: string) => {
       console.log(message)
-    })
 
-    console.log('Connected to Server 🚀')
+      socket.broadcast.emit('enter', 'Welcome to the chat room!')
+    })
   })
 
   io.on('close', () => {
