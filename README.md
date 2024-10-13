@@ -1,21 +1,6 @@
 # Node.js Tutorials
 
-> Node.js에 대한 기본적인 개념들에 대해 학습한다. 단순 실습 및 기록을 위한 저장소이다.
-
-<details>
-<summary>Log 📖 </summary>
-
-- 19년 12월 ~ 20년 1/2월 Start : 처음 노드에 대해서 공부를 시작함 💡
-- 21년 8월 : Make Node Rest API
-- 22년 5월 : 노드만을 위한 공부할 시간을 마련해보자. 백엔드...
-
----
-
-- 2024년 다시 시작하는 **노드 튜터리얼**
-
-  - 24년 4월 : zoom clone coding
-
-  </details>
+> `Node.js`에 대해서 학습하는 저장소
 
 ## Project1_o2 [done]
 
@@ -27,4 +12,10 @@
 
 ## Project3 [doing]
 
-> Zoom Clone Coding
+> Zoom Clone Coding ([참고](https://nomadcoders.co/noom))
+
+## Project4 [doing]
+
+> `dreaming-node` 를 위한 기본편
+
+> `Node.js`의 전반적인 부분을 다시 살펴본다. 📝
